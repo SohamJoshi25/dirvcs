@@ -3,40 +3,25 @@ package dirvcs
 //Speed : 13.6 GB (14,66,08,95,020 bytes) 2,31,946 Files, 25,984 Folders in 7.8302912s
 
 import (
+	"compress/gzip"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"log"
 	"os"
+	"path"
 	"path/filepath"
 	"time"
 
-	ignore "github.com/sabhiram/go-gitignore"
+	"github.com/google/uuid"
+
+	Path "dirvcs/internal/data/path"
+	Color "dirvcs/internal/services/color"
+	Ignore "dirvcs/internal/services/ignore"
+	"dirvcs/internal/services/treelogs"
+	Struct "dirvcs/internal/structs"
 )
-
-var ign *ignore.GitIgnore
-
-var Reset = "\033[0m"
-var Red = "\033[31m"
-var Green = "\033[32m"
-var Yellow = "\033[33m"
-var Blue = "\033[34m"
-var Magenta = "\033[35m"
-var Cyan = "\033[36m"
-var Gray = "\033[37m"
-var White = "\033[97m"
-
-type FileNode struct {
-	Name             string      `json:"name"`
-	Path             string      `json:"path"`
-	Depth            int         `json:"depth"`
-	IsDir            bool        `json:"isDir"`
-	ModificationTime string      `json:"modificationTime"`
-	Size             uint64      `json:"size"`
-	Hash             string      `json:"hash"`
-	Children         []*FileNode `json:"children"`
-}
 
 func SHA256(str string) string {
 	hasher := sha256.New()
@@ -45,7 +30,7 @@ func SHA256(str string) string {
 	return hex.EncodeToString(hashSum)
 }
 
-func dirRecursveInfo(node *FileNode) {
+func DirRecursveInfo(node *Struct.FileNode) {
 	entries, err := os.ReadDir(node.Path)
 	if err != nil {
 		log.Println("Skipping:", node.Path, "due to error:", err)
@@ -63,27 +48,18 @@ func dirRecursveInfo(node *FileNode) {
 		}
 		path := filepath.Join(node.Path, info.Name())
 
-		if ign != nil && ign.MatchesPath(path) {
+		if Ignore.Ignore != nil && Ignore.Ignore.MatchesPath(path) {
 			continue
 		}
-		// fmt.Println(node.Path)
-		// fmt.Println(node.Depth)
-		// fmt.Println(info.Name())
-		// fmt.Println(info.IsDir())
-		// fmt.Println(info.ModTime())
-		// fmt.Println(info.Mode())
-		// fmt.Println(info.Size())
-		// fmt.Println(info.Sys())
-		// fmt.Println()
 
-		var children []*FileNode
+		var children []*Struct.FileNode
 		if info.IsDir() {
-			children = []*FileNode{}
+			children = []*Struct.FileNode{}
 		} else {
 			children = nil
 		}
 
-		childnode := &FileNode{
+		childnode := &Struct.FileNode{
 			Name:             info.Name(),
 			Path:             path,
 			Depth:            node.Depth + 1,
@@ -95,7 +71,7 @@ func dirRecursveInfo(node *FileNode) {
 		}
 
 		if info.IsDir() {
-			dirRecursveInfo(childnode)
+			DirRecursveInfo(childnode)
 		}
 
 		size += childnode.Size
@@ -110,47 +86,62 @@ func dirRecursveInfo(node *FileNode) {
 
 }
 
-func saveTree(root *FileNode, path string) error {
-	data, err := json.MarshalIndent(root, "", "  ")
+func SaveTree(root *Struct.FileNode, path string) error {
+	file, err := os.Create(path)
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(path, data, 0644)
+	defer file.Close()
+
+	gzWriter := gzip.NewWriter(file)
+	defer gzWriter.Close()
+
+	encoder := json.NewEncoder(gzWriter)
+	return encoder.Encode(root)
 }
 
-func printTree(node *FileNode, indent string, color string) {
+func LoadTree(path string) (*Struct.FileNode, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	gzReader, err := gzip.NewReader(file)
+	if err != nil {
+		return nil, err
+	}
+	defer gzReader.Close()
+
+	var root Struct.FileNode
+	decoder := json.NewDecoder(gzReader)
+	err = decoder.Decode(&root)
+	return &root, err
+}
+
+func printTree(node *Struct.FileNode, indent string, color string) {
 	var name string
 
 	switch color {
-	case Red:
+	case Color.Red:
 		name = fmt.Sprintf("'%s' was DELETED.", node.Name)
-	case Yellow:
+	case Color.Yellow:
 		name = fmt.Sprintf("'%s' has SOME CHANGES.", node.Name)
-	case Green:
+	case Color.Green:
 		name = fmt.Sprintf("'%s' was CREATED.", node.Name)
 	default:
 		name = fmt.Sprintf("'%s'", node.Name)
 	}
-	fmt.Println(color + indent + name + Reset)
+	fmt.Println(color + indent + name + Color.Reset)
 	for _, child := range node.Children {
 		printTree(child, indent+"|---", color)
 	}
 }
 
-func loadTree(path string) (*FileNode, error) {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
-	var root FileNode
-	err = json.Unmarshal(data, &root)
-	return &root, err
-}
-
-func compareLevel(oldNode *FileNode, newNode *FileNode, indent string) {
+func CompareLevel(oldNode *Struct.FileNode, newNode *Struct.FileNode, indent string) {
 	//Assumption : There are changes in old and new node 's Hash (Some Changes Exist)
 
-	getChildFromNewNode := func(hash string, filename string) (byte, *FileNode, int) {
+	getChildFromNewNode := func(hash string, filename string) (byte, *Struct.FileNode, int) {
 		// 0 -> No Node Found
 		// 1 -> Node Found with same File Name but mismatching Hash
 		// 2 -> Same Node found with matching hash
@@ -176,26 +167,25 @@ func compareLevel(oldNode *FileNode, newNode *FileNode, indent string) {
 		if status == 0 {
 			//fmt.Printf(Green+"%s'%s' was CREATED.\n"+Reset, indent, oldChild.Name)
 			if oldChild.IsDir {
-				printTree(oldChild, indent, Green)
+				printTree(oldChild, indent, Color.Green)
 			} else {
-				fmt.Printf(Green+"%s'%s' was CREATED.\n"+Reset, indent, oldChild.Name)
+				fmt.Printf(Color.Green+"%s'%s' was CREATED.\n"+Color.Reset, indent, oldChild.Name)
 			}
 		} else if status == 1 {
 
 			if newChild.IsDir {
-				fmt.Printf(Gray+"%s'%s'\n"+Reset, indent, newChild.Name)
+				fmt.Printf(Color.Gray+"%s'%s'\n"+Color.Reset, indent, newChild.Name)
 			} else {
-				fmt.Printf(Yellow+"%s'%s' has SOME CHANGES.\n"+Reset, indent, newChild.Name)
+				fmt.Printf(Color.Yellow+"%s'%s' has SOME CHANGES.\n"+Color.Reset, indent, newChild.Name)
 			}
 
 			childNodeExist[childIndex] = true
 
 			if oldChild.IsDir {
-				compareLevel(oldChild, newChild, indent+"|---")
+				CompareLevel(oldChild, newChild, indent+"|---")
 			}
 
 		} else {
-			//fmt.Printf("%s'%s' has NO CHANGES.\n", indent, newChild.Name)
 			childNodeExist[childIndex] = true
 		}
 	}
@@ -204,13 +194,89 @@ func compareLevel(oldNode *FileNode, newNode *FileNode, indent string) {
 		if !isCounted {
 
 			if newNode.Children[index].IsDir {
-				printTree(newNode.Children[index], indent, Red)
+				printTree(newNode.Children[index], indent, Color.Red)
 			} else {
-				fmt.Printf(Red+"%s'%s' was DELETED.\n"+Reset, indent, newNode.Children[index].Name)
+				fmt.Printf(Color.Red+"%s'%s' was DELETED.\n"+Color.Reset, indent, newNode.Children[index].Name)
 			}
 		}
 
 	}
+}
+
+//Public
+
+func GenerateTree(BASE_PATH, message string) {
+
+	info, err := os.Stat(BASE_PATH)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if !info.IsDir() {
+		log.Fatal("Input Directory Path cannot be a file.")
+	}
+
+	absPath, err := filepath.Abs(BASE_PATH)
+
+	if err != nil {
+		log.Fatal("Absolute File Parsing Error")
+	}
+
+	uuid := uuid.New()
+
+	var rootNode *Struct.FileNode = &Struct.FileNode{
+		Name:             absPath,
+		Path:             absPath,
+		Depth:            0,
+		IsDir:            true,
+		ModificationTime: info.ModTime().Format(time.RFC3339),
+		Size:             uint64(info.Size()),
+		Hash:             SHA256(fmt.Sprintf("%s %s %s", info.Name(), BASE_PATH, info.ModTime().Format(time.RFC3339))),
+		Children:         []*Struct.FileNode{},
+	}
+
+	start := time.Now()
+
+	DirRecursveInfo(rootNode)
+	SaveTree(rootNode, path.Join(Path.TREES_PATH, fmt.Sprintf(`%s.gz`, uuid)))
+
+	var TreeLog *Struct.TreeLog = &Struct.TreeLog{
+		Timestamp: time.Now().Format(time.RFC3339),
+		Message:   message,
+		TreePath:  path.Join(Path.TREES_PATH, fmt.Sprintf(`%s.gz`, uuid)),
+		TreeHash:  rootNode.Hash,
+	}
+
+	treelogs.AppendLog(TreeLog)
+
+	elapsed := time.Since(start)
+
+	fmt.Printf("\nDirectory Persisted '%s' %s", message, uuid)
+	fmt.Printf("\nTime took %s", elapsed)
+
+}
+
+func PrintTree(index int) {
+
+	treelog, err := treelogs.LastLog(index)
+
+	if err != nil {
+		fmt.Errorf(err.Error())
+	}
+
+	rootNode, err := LoadTree(treelog.TreePath)
+
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
+
+	start := time.Now()
+
+	printTree(rootNode, "  ", Color.Gray)
+
+	elapsed := time.Since(start)
+	fmt.Printf("\nTime took %s", elapsed)
 }
 
 func main() {
@@ -219,77 +285,12 @@ func main() {
 	fmt.Println("2. Display Tree")
 	fmt.Println("3. Compare Tree")
 
-	ignore, err := ignore.CompileIgnoreFile(".dirignore")
-	if err != nil {
-		ign = nil
-	} else {
-		ign = ignore
-	}
-
 	var choice int
 	fmt.Scan(&choice)
 
 	if choice == 1 {
 
-		var BASE_PATH string
-		var OUTPUT_PATH string
-
-		fmt.Printf("\nEnter Base Path to generate tree : ")
-		fmt.Scan(&BASE_PATH)
-
-		fmt.Printf("\nEnter Output Path of Generated Tree : ")
-		fmt.Scan(&OUTPUT_PATH)
-
-		OUTPUT_PATH = filepath.Join(OUTPUT_PATH, "tree.json")
-
-		info, err := os.Stat(BASE_PATH)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		if !info.IsDir() {
-			log.Fatal("Input Directory Path cannot be a file.")
-		}
-
-		var rootNode *FileNode = &FileNode{
-			Name:             info.Name(),
-			Path:             BASE_PATH,
-			Depth:            0,
-			IsDir:            true,
-			ModificationTime: info.ModTime().Format(time.RFC3339),
-			Size:             uint64(info.Size()),
-			Hash:             SHA256(fmt.Sprintf("%s %s %s", info.Name(), BASE_PATH, info.ModTime().Format(time.RFC3339))),
-			Children:         []*FileNode{},
-		}
-
-		start := time.Now()
-
-		dirRecursveInfo(rootNode)
-		saveTree(rootNode, OUTPUT_PATH)
-
-		elapsed := time.Since(start)
-		fmt.Printf("Time took %s", elapsed)
-
 	} else if choice == 2 {
-
-		fmt.Printf("\nEnter Path where tree.json exist to Print Tree : ")
-		var OUTPUT_PATH string
-		fmt.Scan(&OUTPUT_PATH)
-
-		OUTPUT_PATH = filepath.Join(OUTPUT_PATH, "tree.json")
-		rootNode, err := loadTree(OUTPUT_PATH)
-
-		if err != nil {
-			fmt.Println(err.Error())
-			os.Exit(1)
-		}
-
-		start := time.Now()
-
-		printTree(rootNode, "  ", Gray)
-
-		elapsed := time.Since(start)
-		fmt.Printf("Time took %s", elapsed)
 
 	} else if choice == 3 {
 
@@ -315,7 +316,7 @@ func main() {
 			log.Fatal("Input Directory Path cannot be a file.")
 		}
 
-		var oldTree *FileNode = &FileNode{
+		var oldTree *Struct.FileNode = &Struct.FileNode{
 			Name:             info.Name(),
 			Path:             NEW_PATH,
 			Depth:            0,
@@ -323,21 +324,21 @@ func main() {
 			ModificationTime: info.ModTime().Format(time.RFC3339),
 			Size:             uint64(info.Size()),
 			Hash:             SHA256(fmt.Sprintf("%s %s %s", info.Name(), NEW_PATH, info.ModTime().Format(time.RFC3339))),
-			Children:         []*FileNode{},
+			Children:         []*Struct.FileNode{},
 		}
 
 		start := time.Now()
 
-		newTree, err := loadTree(OLD_PATH)
+		newTree, err := LoadTree(OLD_PATH)
 
 		if err != nil {
 			fmt.Println(err.Error())
 			os.Exit(1)
 		}
 
-		dirRecursveInfo(oldTree)
+		DirRecursveInfo(oldTree)
 
-		compareLevel(oldTree, newTree, "")
+		CompareLevel(oldTree, newTree, "")
 
 		elapsed := time.Since(start)
 		fmt.Printf("\nTime took %s", elapsed)

@@ -1,7 +1,8 @@
 package services
 
 import (
-	path "dirvcs/internal/data"
+	path "dirvcs/internal/data/path"
+	Log "dirvcs/internal/services/logging"
 
 	"fmt"
 	"log"
@@ -27,7 +28,7 @@ func CreateInit() {
 		os.Exit(1)
 	}
 
-	if err := os.WriteFile(path.IGNORE_PATH, []byte(""), 0755); err != nil {
+	if err := os.WriteFile(path.IGNORE_PATH, []byte(".*"), 0755); err != nil {
 		fmt.Printf("unable to create ignore file: %v", err)
 		os.Exit(1)
 	}
@@ -42,7 +43,12 @@ func CreateInit() {
 		os.Exit(1)
 	}
 
-	AppendLog("dirvcs was initialised.")
+	Log.AppendLog("dirvcs was initialised.")
 
 	fmt.Println("dirvcs initialised")
+}
+
+func CheckInit() bool {
+	_, err := os.Stat(path.BASE_PATH)
+	return err == nil
 }

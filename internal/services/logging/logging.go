@@ -1,14 +1,14 @@
 package services
 
 import (
-	path "dirvcs/internal/data"
+	Path "dirvcs/internal/data/path"
 	"encoding/json"
 	"os"
 	"time"
 )
 
 func AppendLog(entry string) error {
-	logPath := path.LOGS_PATH
+	logPath := Path.LOGS_PATH
 
 	var logs []string
 

@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"dirvcs/internal/data"
-	color "dirvcs/internal/services"
+	Path "dirvcs/internal/data/path"
+	color "dirvcs/internal/services/color"
 	"fmt"
 	"os"
 
@@ -27,7 +27,7 @@ func init() {
 
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath(data.BASE_PATH)
+	viper.AddConfigPath(Path.BASE_PATH)
 
 	viper.SetDefault("prune_limit", 50)
 	viper.SetDefault("auto_compress", true)
