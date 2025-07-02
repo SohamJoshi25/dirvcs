@@ -5,4 +5,5 @@ type TreeLog struct {
 	Message   string `json:"message"`
 	TreePath  string `json:"treepath"`
 	TreeHash  string `json:"treehash"`
+	TreeId    string `json:"treeid"`
 }

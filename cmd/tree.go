@@ -5,11 +5,14 @@ package cmd
 
 import (
 	dirvcs "dirvcs/internal/dirvcs"
+	"dirvcs/internal/services/treelogs"
 
 	"github.com/spf13/cobra"
 )
 
-// treeCmd represents the tree command
+var index int
+var list bool
+
 var treeCmd = &cobra.Command{
 	Use:   "tree",
 	Short: "A brief description of your command",
@@ -20,10 +23,20 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		dirvcs.PrintTree(0)
+		hasIndex := cmd.Flags().Changed("list")
+
+		if hasIndex {
+			treelogs.PrintTreeLogs()
+		} else {
+			dirvcs.PrintTree(index)
+		}
+
 	},
 }
 
 func init() {
+	treeCmd.Flags().IntVarP(&index, "index", "i", 0, "Previous Index of Persisted Tree")
+	treeCmd.Flags().BoolVarP(&list, "list", "l", false, "List all persisted trees")
+
 	rootCmd.AddCommand(treeCmd)
 }

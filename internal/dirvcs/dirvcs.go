@@ -19,7 +19,7 @@ import (
 	Path "dirvcs/internal/data/path"
 	Color "dirvcs/internal/services/color"
 	Ignore "dirvcs/internal/services/ignore"
-	"dirvcs/internal/services/treelogs"
+	TLog "dirvcs/internal/services/treelogs"
 	Struct "dirvcs/internal/structs"
 )
 
@@ -139,7 +139,10 @@ func printTree(node *Struct.FileNode, indent string, color string) {
 }
 
 func CompareLevel(oldNode *Struct.FileNode, newNode *Struct.FileNode, indent string) {
-	//Assumption : There are changes in old and new node 's Hash (Some Changes Exist)
+
+	if oldNode.Hash == newNode.Hash {
+		return
+	}
 
 	getChildFromNewNode := func(hash string, filename string) (byte, *Struct.FileNode, int) {
 		// 0 -> No Node Found
@@ -167,9 +170,9 @@ func CompareLevel(oldNode *Struct.FileNode, newNode *Struct.FileNode, indent str
 		if status == 0 {
 			//fmt.Printf(Green+"%s'%s' was CREATED.\n"+Reset, indent, oldChild.Name)
 			if oldChild.IsDir {
-				printTree(oldChild, indent, Color.Green)
+				printTree(oldChild, indent, Color.Red)
 			} else {
-				fmt.Printf(Color.Green+"%s'%s' was CREATED.\n"+Color.Reset, indent, oldChild.Name)
+				fmt.Printf(Color.Red+"%s'%s' was Deleted.\n"+Color.Reset, indent, oldChild.Name)
 			}
 		} else if status == 1 {
 
@@ -194,9 +197,9 @@ func CompareLevel(oldNode *Struct.FileNode, newNode *Struct.FileNode, indent str
 		if !isCounted {
 
 			if newNode.Children[index].IsDir {
-				printTree(newNode.Children[index], indent, Color.Red)
+				printTree(newNode.Children[index], indent, Color.Green)
 			} else {
-				fmt.Printf(Color.Red+"%s'%s' was DELETED.\n"+Color.Reset, indent, newNode.Children[index].Name)
+				fmt.Printf(Color.Green+"%s'%s' was Created.\n"+Color.Reset, indent, newNode.Children[index].Name)
 			}
 		}
 
@@ -245,9 +248,10 @@ func GenerateTree(BASE_PATH, message string) {
 		Message:   message,
 		TreePath:  path.Join(Path.TREES_PATH, fmt.Sprintf(`%s.gz`, uuid)),
 		TreeHash:  rootNode.Hash,
+		TreeId:    uuid.String(),
 	}
 
-	treelogs.AppendLog(TreeLog)
+	TLog.AppendLog(TreeLog)
 
 	elapsed := time.Since(start)
 
@@ -258,10 +262,48 @@ func GenerateTree(BASE_PATH, message string) {
 
 func PrintTree(index int) {
 
-	treelog, err := treelogs.LastLog(index)
+	if index == 0 {
+
+		BASE_PATH := "."
+
+		var newTree *Struct.FileNode
+
+		info, err := os.Stat(BASE_PATH)
+		if err != nil {
+			log.Fatal(err)
+		}
+		absPath, err := filepath.Abs(BASE_PATH)
+
+		if err != nil {
+			log.Fatal("Absolute File Parsing Error")
+		}
+
+		newTree = &Struct.FileNode{
+			Name:             absPath,
+			Path:             absPath,
+			Depth:            0,
+			IsDir:            true,
+			ModificationTime: info.ModTime().Format(time.RFC3339),
+			Size:             uint64(info.Size()),
+			Hash:             SHA256(fmt.Sprintf("%s %s %s", info.Name(), BASE_PATH, info.ModTime().Format(time.RFC3339))),
+			Children:         []*Struct.FileNode{},
+		}
+
+		DirRecursveInfo(newTree)
+		printTree(newTree, "", Color.Gray)
+
+		return
+	} else {
+		index--
+	}
+
+	treelog, err := TLog.LastLogIdx(index)
+
+	TLog.PrintTreeLog(treelog)
 
 	if err != nil {
-		fmt.Errorf(err.Error())
+		fmt.Println(err.Error())
+		os.Exit(1)
 	}
 
 	rootNode, err := LoadTree(treelog.TreePath)
@@ -273,79 +315,79 @@ func PrintTree(index int) {
 
 	start := time.Now()
 
-	printTree(rootNode, "  ", Color.Gray)
+	printTree(rootNode, "", Color.Gray)
 
 	elapsed := time.Since(start)
 	fmt.Printf("\nTime took %s", elapsed)
 }
 
-func main() {
-	fmt.Println("===== DIRVCS =====\n\nEnter Your Choice")
-	fmt.Println("1. Generate Tree")
-	fmt.Println("2. Display Tree")
-	fmt.Println("3. Compare Tree")
+func CompareTree(oldId, newId string) {
 
-	var choice int
-	fmt.Scan(&choice)
+	var oldTreeLog *Struct.TreeLog
+	var err1 error
 
-	if choice == 1 {
+	if oldId == "" {
+		oldTreeLog, err1 = TLog.LastLogIdx(0)
+	} else {
+		oldTreeLog, err1 = TLog.LastLogUuid(oldId)
+	}
 
-	} else if choice == 2 {
+	if err1 != nil {
+		fmt.Printf("UUID not found %s %v", oldId, err1)
+	}
 
-	} else if choice == 3 {
+	var newTree *Struct.FileNode
 
-		var OLD_PATH string
-		var NEW_PATH string
+	if newId == "" {
 
-		fmt.Printf("\nEnter Path of generated tree : ")
-		fmt.Scan(&OLD_PATH)
+		BASE_PATH := "."
 
-		OLD_PATH = filepath.Join(OLD_PATH, "tree.json")
-
-		fmt.Printf("\nEnter Path of New Directory : ")
-		fmt.Scan(&NEW_PATH)
-
-		fmt.Printf("\nDirectory Change Log \n\n")
-
-		info, err := os.Stat(".")
+		info, err := os.Stat(BASE_PATH)
 		if err != nil {
 			log.Fatal(err)
 		}
+		absPath, err := filepath.Abs(BASE_PATH)
 
-		if !info.IsDir() {
-			log.Fatal("Input Directory Path cannot be a file.")
+		if err != nil {
+			log.Fatal("Absolute File Parsing Error")
 		}
 
-		var oldTree *Struct.FileNode = &Struct.FileNode{
-			Name:             info.Name(),
-			Path:             NEW_PATH,
+		newTree = &Struct.FileNode{
+			Name:             absPath,
+			Path:             absPath,
 			Depth:            0,
 			IsDir:            true,
 			ModificationTime: info.ModTime().Format(time.RFC3339),
 			Size:             uint64(info.Size()),
-			Hash:             SHA256(fmt.Sprintf("%s %s %s", info.Name(), NEW_PATH, info.ModTime().Format(time.RFC3339))),
+			Hash:             SHA256(fmt.Sprintf("%s %s %s", info.Name(), BASE_PATH, info.ModTime().Format(time.RFC3339))),
 			Children:         []*Struct.FileNode{},
 		}
 
-		start := time.Now()
-
-		newTree, err := LoadTree(OLD_PATH)
-
-		if err != nil {
-			fmt.Println(err.Error())
-			os.Exit(1)
-		}
-
-		DirRecursveInfo(oldTree)
-
-		CompareLevel(oldTree, newTree, "")
-
-		elapsed := time.Since(start)
-		fmt.Printf("\nTime took %s", elapsed)
+		DirRecursveInfo(newTree)
 
 	} else {
-		fmt.Println("Wrong Choice")
+		newTreeLog, err1 := TLog.LastLogUuid(newId)
+
+		if err1 != nil {
+			fmt.Printf("UUID not found %s", newId)
+		}
+
+		newTree, err1 = LoadTree(newTreeLog.TreePath)
+
+		if err1 != nil {
+			fmt.Printf("Error Loading Tree %v", err1)
+		}
 	}
 
-	os.Exit(0)
+	oldTree, err2 := LoadTree(oldTreeLog.TreePath)
+
+	if err1 != nil || err2 != nil {
+		fmt.Printf("Could Not Load Tree ")
+	}
+
+	if oldTree.Hash != newTree.Hash {
+		fmt.Printf(Color.Gray+"'%s'\n"+Color.Reset, newTree.Path)
+		CompareLevel(oldTree, newTree, "|---")
+	}
+
 }
