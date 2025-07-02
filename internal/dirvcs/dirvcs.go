@@ -321,6 +321,32 @@ func PrintTree(index int) {
 	fmt.Printf("\nTime took %s", elapsed)
 }
 
+func PrintTreeUUID(uuid string) {
+
+	treelog, err := TLog.GetByUuid(uuid)
+
+	TLog.PrintTreeLog(treelog)
+
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
+
+	rootNode, err := LoadTree(treelog.TreePath)
+
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
+
+	start := time.Now()
+
+	printTree(rootNode, "", Color.Gray)
+
+	elapsed := time.Since(start)
+	fmt.Printf("\nTime took %s", elapsed)
+}
+
 func CompareTree(oldId, newId string) {
 
 	var oldTreeLog *Struct.TreeLog
@@ -329,7 +355,7 @@ func CompareTree(oldId, newId string) {
 	if oldId == "" {
 		oldTreeLog, err1 = TLog.LastLogIdx(0)
 	} else {
-		oldTreeLog, err1 = TLog.LastLogUuid(oldId)
+		oldTreeLog, err1 = TLog.GetByUuid(oldId)
 	}
 
 	if err1 != nil {
@@ -366,7 +392,7 @@ func CompareTree(oldId, newId string) {
 		DirRecursveInfo(newTree)
 
 	} else {
-		newTreeLog, err1 := TLog.LastLogUuid(newId)
+		newTreeLog, err1 := TLog.GetByUuid(newId)
 
 		if err1 != nil {
 			fmt.Printf("UUID not found %s", newId)

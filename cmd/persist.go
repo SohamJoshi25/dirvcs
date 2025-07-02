@@ -26,7 +26,6 @@ var persistCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(persistCmd)
-
 	persistCmd.Flags().StringVarP(&message, "message", "m", "", "Commit message for the snapshot")
 
 }

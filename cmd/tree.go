@@ -12,6 +12,7 @@ import (
 
 var index int
 var list bool
+var uuid string
 
 var treeCmd = &cobra.Command{
 	Use:   "tree",
@@ -27,6 +28,8 @@ to quickly create a Cobra application.`,
 
 		if hasIndex {
 			treelogs.PrintTreeLogs()
+		} else if uuid != "" {
+			dirvcs.PrintTreeUUID(uuid)
 		} else {
 			dirvcs.PrintTree(index)
 		}
@@ -37,6 +40,7 @@ to quickly create a Cobra application.`,
 func init() {
 	treeCmd.Flags().IntVarP(&index, "index", "i", 0, "Previous Index of Persisted Tree")
 	treeCmd.Flags().BoolVarP(&list, "list", "l", false, "List all persisted trees")
+	treeCmd.Flags().StringVar(&uuid, "uuid", "", "List all persisted trees")
 
 	rootCmd.AddCommand(treeCmd)
 }

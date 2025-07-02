@@ -44,7 +44,7 @@ func LastLogIdx(index int) (*Struct.TreeLog, error) {
 	return logs[len(logs)-1-index], nil
 }
 
-func LastLogUuid(uuid string) (*Struct.TreeLog, error) {
+func GetByUuid(uuid string) (*Struct.TreeLog, error) {
 
 	logPath := Path.TREE_LOG_PATH
 	var logs []*Struct.TreeLog
