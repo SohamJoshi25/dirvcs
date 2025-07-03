@@ -39,6 +39,10 @@ Settings are stored in the DirVCS YAML config file.`,
 					fmt.Println("Error: treelimit must be an integer")
 					return
 				}
+				if val < 2 {
+					fmt.Println("Error: treelimit must be greater than 1")
+					return
+				}
 				viper.Set(setKey, val)
 			} else {
 				viper.Set(setKey, setValue)

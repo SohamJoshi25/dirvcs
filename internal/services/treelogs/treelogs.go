@@ -29,10 +29,6 @@ func AppendLog(root *Struct.TreeLog) error {
 
 func LastLogIdx(index int) (*Struct.TreeLog, error) {
 
-	if index < 0 {
-		return nil, fmt.Errorf("index cannot be less than 0.")
-	}
-
 	logPath := Path.TREE_LOG_PATH
 
 	var logs []*Struct.TreeLog
@@ -41,8 +37,16 @@ func LastLogIdx(index int) (*Struct.TreeLog, error) {
 		_ = json.Unmarshal(data, &logs)
 	}
 
+	if len(logs) == 0 {
+		return nil, fmt.Errorf("please persist atleast once to compare versions")
+	}
+
+	if index < 0 {
+		return nil, fmt.Errorf("index cannot be less than 0")
+	}
+
 	if index >= len(logs) {
-		return nil, fmt.Errorf(`index cannot be greater than %d`, len(logs)-1)
+		return nil, fmt.Errorf(`index cannot be greater than %d`, len(logs))
 	}
 
 	return logs[len(logs)-1-index], nil
@@ -72,16 +76,20 @@ func GetByUuid(uuid string) (*Struct.TreeLog, error) {
 
 func DeleteLogIdx(index int) error {
 
-	if index < 0 {
-		return fmt.Errorf("index cannot be less than 0")
-	}
-
 	logPath := Path.TREE_LOG_PATH
 
 	var logs []*Struct.TreeLog
 
 	if data, err := os.ReadFile(logPath); err == nil && len(data) > 0 {
 		_ = json.Unmarshal(data, &logs)
+	}
+
+	if len(logs) == 0 {
+		return fmt.Errorf("please persist atleast once to delete tree")
+	}
+
+	if index < 0 {
+		return fmt.Errorf("index cannot be less than 0")
 	}
 
 	if index >= len(logs) {

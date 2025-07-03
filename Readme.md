@@ -2,6 +2,8 @@
 
 **DirVCS** is a lightweight version control system for directory structures, inspired by Git but tailored for snapshots of file trees.
 
+**10x Faster** than **git** for directory tracking.
+
 It allows you to **persist**, **compare**, **export**, **prune**, and **track changes** in directory states easily from the command line.
 
 ---

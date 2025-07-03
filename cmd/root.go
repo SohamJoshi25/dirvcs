@@ -2,11 +2,10 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	Path "dirvcs/internal/data/path"
-	color "dirvcs/internal/services/color"
+	Color "dirvcs/internal/services/color"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -26,6 +25,7 @@ It supports persisting directory states, comparing changes, pruning old versions
   dirvcs changes               # Compare tree with previous snapshot
 `,
 	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println(Color.Color("Welcome to DIR VCS\n", Color.Blue))
 		_ = cmd.Help() // show help by default
 	},
 }
@@ -33,14 +33,6 @@ It supports persisting directory states, comparing changes, pruning old versions
 func init() {
 	// Version formatting
 	rootCmd.SetVersionTemplate(`{{.Version}}` + "\n")
-
-	// Persistent Flags (available to all subcommands)
-	rootCmd.PersistentFlags().String("config", "", "Path to config file (default is BASE_PATH/config.yaml)")
-	rootCmd.PersistentFlags().Bool("verbose", false, "Enable verbose logging")
-
-	// Bind to viper
-	viper.BindPFlag("config", rootCmd.PersistentFlags().Lookup("config"))
-	viper.BindPFlag("verbose", rootCmd.PersistentFlags().Lookup("verbose"))
 
 	// Config file setup
 	viper.SetConfigName("config")
@@ -51,15 +43,12 @@ func init() {
 
 	// Read config
 	if err := viper.ReadInConfig(); err != nil {
-		log.Fatalf("Failed to read config file: %v", err)
 	}
 
 	// Optional verbose logging
 	if viper.GetBool("verbose") {
 		fmt.Println("Using config:", viper.ConfigFileUsed())
 	}
-
-	fmt.Println(color.Color("Welcome to DIR VCS", color.Blue))
 }
 
 func Execute() {

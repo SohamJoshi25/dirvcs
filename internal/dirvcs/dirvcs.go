@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/spf13/viper"
 
 	Path "dirvcs/internal/data/path"
 	Color "dirvcs/internal/services/color"
@@ -133,7 +134,15 @@ func printTree(node *Struct.FileNode, indent string, color string) {
 	default:
 		name = fmt.Sprintf("'%s'", node.Name)
 	}
-	fmt.Println(color + indent + name + Color.Reset)
+
+	verbose := viper.GetBool("verbose")
+
+	if verbose {
+		name = fmt.Sprintf("%s %s %s", name, node.ModificationTime, node.Hash)
+	}
+
+	fmt.Println(Color.Color(indent+name, color))
+
 	for _, child := range node.Children {
 		printTree(child, indent+"|---", color)
 	}
@@ -148,6 +157,8 @@ func saveTreeJson(root *Struct.FileNode, path string) error {
 }
 
 func CompareLevel(oldNode *Struct.FileNode, newNode *Struct.FileNode, indent string) {
+
+	verbose := viper.GetBool("verbose")
 
 	if oldNode.Hash == newNode.Hash {
 		return
@@ -181,14 +192,30 @@ func CompareLevel(oldNode *Struct.FileNode, newNode *Struct.FileNode, indent str
 			if oldChild.IsDir {
 				printTree(oldChild, indent, Color.Red)
 			} else {
-				fmt.Printf(Color.Red+"%s'%s' was Deleted.\n"+Color.Reset, indent, oldChild.Name)
+
+				if verbose {
+					fmt.Printf(Color.Red+"%s'%s' was Deleted. %s %s\n"+Color.Reset, indent, oldChild.Name, oldChild.ModificationTime, oldChild.Hash)
+				} else {
+					fmt.Printf(Color.Red+"%s'%s' was Deleted.\n"+Color.Reset, indent, oldChild.Name)
+				}
+
 			}
 		} else if status == 1 {
 
 			if newChild.IsDir {
-				fmt.Printf(Color.Gray+"%s'%s'\n"+Color.Reset, indent, newChild.Name)
+
+				if verbose {
+					fmt.Printf(Color.Gray+"%s'%s' %s %s\n"+Color.Reset, indent, oldChild.Name, oldChild.ModificationTime, oldChild.Hash)
+				} else {
+					fmt.Printf(Color.Gray+"%s'%s'\n"+Color.Reset, indent, newChild.Name)
+				}
 			} else {
-				fmt.Printf(Color.Yellow+"%s'%s' has SOME CHANGES.\n"+Color.Reset, indent, newChild.Name)
+				if verbose {
+					fmt.Printf(Color.Yellow+"%s'%s' has SOME CHANGES. %s %s\n"+Color.Reset, indent, oldChild.Name, oldChild.ModificationTime, oldChild.Hash)
+				} else {
+					fmt.Printf(Color.Yellow+"%s'%s' has SOME CHANGES.\n"+Color.Reset, indent, newChild.Name)
+				}
+
 			}
 
 			childNodeExist[childIndex] = true
@@ -208,7 +235,12 @@ func CompareLevel(oldNode *Struct.FileNode, newNode *Struct.FileNode, indent str
 			if newNode.Children[index].IsDir {
 				printTree(newNode.Children[index], indent, Color.Green)
 			} else {
-				fmt.Printf(Color.Green+"%s'%s' was Created.\n"+Color.Reset, indent, newNode.Children[index].Name)
+
+				if verbose {
+					fmt.Printf(Color.Green+"%s'%s' was Created. %s %s\n"+Color.Reset, indent, newNode.Name, newNode.ModificationTime, newNode.Hash)
+				} else {
+					fmt.Printf(Color.Green+"%s'%s' was Created.\n"+Color.Reset, indent, newNode.Children[index].Name)
+				}
 			}
 		}
 
@@ -311,10 +343,15 @@ func PrintTree(index int) {
 
 	treelog, err := TLog.LastLogIdx(index)
 
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
 	TLog.PrintTreeLog(treelog)
 
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println(err)
 		os.Exit(1)
 	}
 
@@ -396,7 +433,8 @@ func CompareTree(oldId, newId string) {
 	}
 
 	if err1 != nil {
-		fmt.Printf("UUID not found %s %v", oldId, err1)
+		fmt.Printf("%v\n", err1)
+		os.Exit(1)
 	}
 
 	var newTree *Struct.FileNode
