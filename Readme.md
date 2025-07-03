@@ -2,7 +2,7 @@
 
 **DirVCS** is a lightweight version control system for directory structures, inspired by Git but tailored for snapshots of file trees.
 
-**10x Faster** than **git** for directory tracking.
+**10x Faster** than **git** for directory tracking. **Speed** : 13.6 GB (14,66,08,95,020 bytes) 2,31,946 Files, 25,984 Folders in **15.1408093s** for indexing.
 
 It allows you to **persist**, **compare**, **export**, **prune**, and **track changes** in directory states easily from the command line.
 
@@ -17,6 +17,7 @@ It allows you to **persist**, **compare**, **export**, **prune**, and **track ch
 - Manage ignored files/folders
 - View internal logs
 - Easy YAML-based configuration
+- Faster than git in some aspect
 
 ---
 

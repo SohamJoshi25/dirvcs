@@ -54,6 +54,7 @@ You can:
 
 		if removeTreeId != "" {
 			treelogs.DeleteLogUuid(removeTreeId)
+			fmt.Println("Tree Deleted")
 			Logs.AppendLog(fmt.Sprintf("tree deleted %s", removeTreeId))
 			return
 		}

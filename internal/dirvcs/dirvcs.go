@@ -1,6 +1,6 @@
 package dirvcs
 
-//Speed : 13.6 GB (14,66,08,95,020 bytes) 2,31,946 Files, 25,984 Folders in 7.8302912s
+//Speed : 13.6 GB (14,66,08,95,020 bytes) 2,31,946 Files, 25,984 Folders in 15.1408093s
 
 import (
 	"compress/gzip"
