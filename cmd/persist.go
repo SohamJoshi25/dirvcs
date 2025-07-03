@@ -5,6 +5,7 @@ package cmd
 
 import (
 	dirvcs "dirvcs/internal/dirvcs"
+	Init "dirvcs/internal/services/init"
 
 	"github.com/spf13/cobra"
 )
@@ -20,6 +21,7 @@ var persistCmd = &cobra.Command{
 		This application is a tool to generate the needed files
 		to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		Init.CheckInit()
 		dirvcs.GenerateTree(".", message)
 	},
 }

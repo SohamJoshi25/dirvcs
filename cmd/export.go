@@ -1,40 +1,41 @@
-/*
-Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-
-*/
 package cmd
 
 import (
 	"fmt"
 
+	Dirvcs "dirvcs/internal/dirvcs"
+	Init "dirvcs/internal/services/init"
+
 	"github.com/spf13/cobra"
 )
 
-// exportCmd represents the export command
+var ExportTreeUUID string
+var path string
+
 var exportCmd = &cobra.Command{
 	Use:   "export",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Export a directory tree to .json format",
+	Long: `Export a directory as a versioned tree.
+You can optionally specify a UUID, or it will use default logic.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("export called")
+		Init.CheckInit()
+
+		if ExportTreeUUID == "" {
+			fmt.Println("Exporting directory tree without UUID...")
+		} else {
+			fmt.Printf("Exporting directory tree with UUID: %s\n", ExportTreeUUID)
+		}
+
+		fmt.Printf("Path to export: %s\n", path)
+
+		Dirvcs.ExportTree(ExportTreeUUID, path)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(exportCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// exportCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// exportCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	exportCmd.Flags().StringVarP(&path, "path", "p", "", "Path to directory (required)")
+	exportCmd.Flags().StringVarP(&ExportTreeUUID, "uuid", "u", "", "Optional UUID for export")
+	exportCmd.MarkFlagRequired("path")
 }

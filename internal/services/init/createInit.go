@@ -28,7 +28,7 @@ func CreateInit() {
 		os.Exit(1)
 	}
 
-	if err := os.WriteFile(path.IGNORE_PATH, []byte(".*"), 0755); err != nil {
+	if err := os.WriteFile(path.IGNORE_PATH, []byte(".*\n"), 0755); err != nil {
 		fmt.Printf("unable to create ignore file: %v", err)
 		os.Exit(1)
 	}
@@ -48,7 +48,10 @@ func CreateInit() {
 	fmt.Println("dirvcs initialised")
 }
 
-func CheckInit() bool {
+func CheckInit() {
 	_, err := os.Stat(path.BASE_PATH)
-	return err == nil
+	if err != nil {
+		fmt.Println("dirvcs not initialised in this directory")
+		os.Exit(1)
+	}
 }

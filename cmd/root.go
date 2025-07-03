@@ -4,6 +4,7 @@ import (
 	Path "dirvcs/internal/data/path"
 	color "dirvcs/internal/services/color"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -29,8 +30,11 @@ func init() {
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(Path.BASE_PATH)
 
-	viper.SetDefault("prune_limit", 50)
-	viper.SetDefault("auto_compress", true)
+	viper.SetDefault("treelimit", 20)
+
+	if err := viper.ReadInConfig(); err != nil {
+		log.Fatalf("Failed to read config file: %v", err)
+	}
 
 }
 

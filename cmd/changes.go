@@ -5,6 +5,7 @@ package cmd
 
 import (
 	Dirvsc "dirvcs/internal/dirvcs"
+	Init "dirvcs/internal/services/init"
 
 	"github.com/spf13/cobra"
 )
@@ -28,6 +29,7 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
+	Init.CheckInit()
 	changesCmd.Flags().StringVarP(&oldId, "old", "o", "", "UUID of persisit which is to be considered base. If not given, will compare the last persist.")
 	changesCmd.Flags().StringVarP(&newId, "new", "n", "", "UUID of persisit which is to be compared with. If not given, will compare to current unpersisted working directory")
 	rootCmd.AddCommand(changesCmd)

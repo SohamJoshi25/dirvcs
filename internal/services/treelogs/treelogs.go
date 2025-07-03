@@ -2,10 +2,14 @@ package treelogs
 
 import (
 	Path "dirvcs/internal/data/path"
+	Logs "dirvcs/internal/services/logging"
 	Struct "dirvcs/internal/structs"
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
+
+	"github.com/spf13/viper"
 )
 
 func AppendLog(root *Struct.TreeLog) error {
@@ -53,6 +57,10 @@ func GetByUuid(uuid string) (*Struct.TreeLog, error) {
 		_ = json.Unmarshal(data, &logs)
 	}
 
+	if uuid == "" {
+		return logs[len(logs)-1], nil
+	}
+
 	for idx := range logs {
 		if logs[idx].TreeId == uuid {
 			return logs[idx], nil
@@ -65,7 +73,7 @@ func GetByUuid(uuid string) (*Struct.TreeLog, error) {
 func DeleteLogIdx(index int) error {
 
 	if index < 0 {
-		return fmt.Errorf("Index cannot be less than 0.")
+		return fmt.Errorf("index cannot be less than 0")
 	}
 
 	logPath := Path.TREE_LOG_PATH
@@ -77,7 +85,13 @@ func DeleteLogIdx(index int) error {
 	}
 
 	if index >= len(logs) {
-		return fmt.Errorf(`Index cannot be greater than %d`, len(logs))
+		return fmt.Errorf(`index cannot be greater than %d`, len(logs))
+	}
+
+	er := os.Remove(logs[index].TreePath)
+	if er != nil {
+		fmt.Println(er)
+		os.Exit(1)
 	}
 
 	logs = append(logs[:index], logs[index+1:]...)
@@ -110,10 +124,42 @@ func DeleteLogUuid(uuid string) error {
 		os.Exit(1)
 	}
 
+	er := os.Remove(logs[index].TreePath)
+	if er != nil {
+		fmt.Println(er)
+		os.Exit(1)
+	}
+
 	logs = append(logs[:index], logs[index+1:]...)
 	newData, _ := json.MarshalIndent(logs, "", "  ")
 
-	return os.WriteFile(logPath, newData, 0644)
+	err := os.WriteFile(logPath, newData, 0644)
+	return err
+}
+
+func LimitTree() {
+	logPath := Path.TREE_LOG_PATH
+
+	var logs []*Struct.TreeLog
+
+	if data, err := os.ReadFile(logPath); err == nil && len(data) > 0 {
+		_ = json.Unmarshal(data, &logs)
+	}
+
+	if err := viper.ReadInConfig(); err != nil {
+		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+			fmt.Println("config file not found")
+		} else {
+			log.Fatalf("Error reading config file: %s", err)
+		}
+	}
+
+	TreeLimit := viper.GetInt("treelimit")
+
+	if len(logs) > TreeLimit {
+		DeleteLogUuid(logs[0].TreeId)
+		Logs.AppendLog(fmt.Sprintf("Trees %s Pruned to the set tree limit %d", logs[0].TreeId, TreeLimit))
+	}
 }
 
 func PrintTreeLogs() {

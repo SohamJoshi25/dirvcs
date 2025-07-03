@@ -1,40 +1,60 @@
-/*
-Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-
-*/
 package cmd
 
 import (
 	"fmt"
+	"log"
+	"strconv"
+
+	Init "dirvcs/internal/services/init"
+	Log "dirvcs/internal/services/logging"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
-// configCmd represents the config command
+var setKey, setValue string
+
 var configCmd = &cobra.Command{
 	Use:   "config",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "View or update configuration",
+	Long:  "View all current configuration values, or update a specific config key like tree_limit.",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("config called")
+
+		Init.CheckInit()
+
+		// Update if --set is used
+		if setKey != "" && setValue != "" {
+			switch setKey {
+			case "treelimit":
+				val, err := strconv.Atoi(setValue)
+				if err != nil {
+					fmt.Println("treelimit must be an integer")
+					return
+				}
+				viper.Set("treelimit", val)
+			default:
+				viper.Set(setKey, setValue)
+			}
+
+			if err := viper.WriteConfig(); err != nil {
+				log.Fatalf("Failed to write config: %v", err)
+			}
+			fmt.Printf("Updated config: %s = %s\n", setKey, setValue)
+			Log.AppendLog(fmt.Sprintf("Updated config: %s = %s", setKey, setValue))
+			return
+		}
+
+		// If no --set, display all config values
+		fmt.Println("Current Configuration:")
+		for _, key := range viper.AllKeys() {
+			fmt.Printf("  %s: %v\n", key, viper.Get(key))
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(configCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// configCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// configCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	configCmd.Flags().StringVar(&setKey, "set-key", "", "Configuration key to set (e.g., treelimit)")
+	configCmd.Flags().StringVar(&setValue, "set-value", "", "Value to set for the configuration key")
 }

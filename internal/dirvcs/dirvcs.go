@@ -19,6 +19,7 @@ import (
 	Path "dirvcs/internal/data/path"
 	Color "dirvcs/internal/services/color"
 	Ignore "dirvcs/internal/services/ignore"
+	Log "dirvcs/internal/services/logging"
 	TLog "dirvcs/internal/services/treelogs"
 	Struct "dirvcs/internal/structs"
 )
@@ -138,6 +139,14 @@ func printTree(node *Struct.FileNode, indent string, color string) {
 	}
 }
 
+func saveTreeJson(root *Struct.FileNode, path string) error {
+	data, err := json.MarshalIndent(root, "", "  ")
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(path, data, 0644)
+}
+
 func CompareLevel(oldNode *Struct.FileNode, newNode *Struct.FileNode, indent string) {
 
 	if oldNode.Hash == newNode.Hash {
@@ -252,11 +261,14 @@ func GenerateTree(BASE_PATH, message string) {
 	}
 
 	TLog.AppendLog(TreeLog)
+	Log.AppendLog(fmt.Sprintf("tree generated %s %s", uuid, message))
 
 	elapsed := time.Since(start)
 
 	fmt.Printf("\nDirectory Persisted '%s' %s", message, uuid)
 	fmt.Printf("\nTime took %s", elapsed)
+
+	TLog.LimitTree()
 
 }
 
@@ -342,6 +354,31 @@ func PrintTreeUUID(uuid string) {
 	start := time.Now()
 
 	printTree(rootNode, "", Color.Gray)
+
+	elapsed := time.Since(start)
+	fmt.Printf("\nTime took %s", elapsed)
+}
+
+func ExportTree(uuid string, filepath string) {
+	treelog, err := TLog.GetByUuid(uuid)
+
+	TLog.PrintTreeLog(treelog)
+
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
+
+	rootNode, err := LoadTree(treelog.TreePath)
+
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
+
+	start := time.Now()
+
+	saveTreeJson(rootNode, filepath)
 
 	elapsed := time.Since(start)
 	fmt.Printf("\nTime took %s", elapsed)
