@@ -1,36 +1,39 @@
-/*
-Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
-	Dirvsc "dirvcs/internal/dirvcs"
+	Dirvcs "dirvcs/internal/dirvcs"
 	Init "dirvcs/internal/services/init"
 
 	"github.com/spf13/cobra"
 )
 
-var oldId string
-var newId string
+var (
+	oldId string
+	newId string
+)
 
-// changesCmd represents the changes command
 var changesCmd = &cobra.Command{
 	Use:   "changes",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Compare two directory tree states",
+	Long: `The 'changes' command compares two tree snapshots by UUID,
+or compares a previous snapshot to the current working directory.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+If --old is not provided, the most recent snapshot is used as the base.
+If --new is not provided, it compares against the current directory.`,
+	Example: `
+  dirvcs changes --old abc-uuid --new def-uuid
+  dirvcs changes --old abc-uuid
+  dirvcs changes                     # default: last snapshot vs working directory
+`,
 	Run: func(cmd *cobra.Command, args []string) {
-		Dirvsc.CompareTree(oldId, newId)
+		Init.CheckInit()
+		Dirvcs.CompareTree(oldId, newId)
 	},
 }
 
 func init() {
-	Init.CheckInit()
-	changesCmd.Flags().StringVarP(&oldId, "old", "o", "", "UUID of persisit which is to be considered base. If not given, will compare the last persist.")
-	changesCmd.Flags().StringVarP(&newId, "new", "n", "", "UUID of persisit which is to be compared with. If not given, will compare to current unpersisted working directory")
+	changesCmd.Flags().StringVarP(&oldId, "old", "o", "", "UUID of base snapshot (optional, defaults to last)")
+	changesCmd.Flags().StringVarP(&newId, "new", "n", "", "UUID of target snapshot (optional, defaults to current working directory)")
+
 	rootCmd.AddCommand(changesCmd)
 }

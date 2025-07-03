@@ -1,10 +1,7 @@
-/*
-Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
-	dirvcs "dirvcs/internal/dirvcs"
+	"dirvcs/internal/dirvcs"
 	Init "dirvcs/internal/services/init"
 	Logs "dirvcs/internal/services/logging"
 	"dirvcs/internal/services/treelogs"
@@ -13,45 +10,64 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var index int
-var list bool
-var uuid string
-var removeTreeId string
+var (
+	index        int
+	list         bool
+	uuid         string
+	removeTreeId string
+)
 
 var treeCmd = &cobra.Command{
 	Use:   "tree",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "View or manage persisted tree snapshots",
+	Long: `The 'tree' command allows you to list, view, or remove persisted tree snapshots.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+You can:
+- View a tree snapshot by index (--index)
+- List all available trees (--list)
+- Show a specific tree using its UUID (--uuid)
+- Remove a tree by UUID (--remove)
+`,
+	Example: `
+  dirvcs tree --list
+  dirvcs tree --index 2
+  dirvcs tree --uuid 31abcf99-1234
+  dirvcs tree --remove 31abcf99-1234
+`,
 	Run: func(cmd *cobra.Command, args []string) {
-
 		Init.CheckInit()
 
-		hasIndex := cmd.Flags().Changed("list")
-
-		if hasIndex {
+		if list {
 			treelogs.PrintTreeLogs()
-		} else if uuid != "" {
-			dirvcs.PrintTreeUUID(uuid)
-		} else if removeTreeId != "" {
-			treelogs.DeleteLogUuid(removeTreeId)
-			Logs.AppendLog(fmt.Sprintf("tree deleted %s", removeTreeId))
-		} else {
-			dirvcs.PrintTree(index)
+			return
 		}
 
+		if uuid != "" && removeTreeId != "" {
+			fmt.Println("Error: --uuid and --remove cannot be used together")
+			return
+		}
+
+		if uuid != "" {
+			dirvcs.PrintTreeUUID(uuid)
+			return
+		}
+
+		if removeTreeId != "" {
+			treelogs.DeleteLogUuid(removeTreeId)
+			Logs.AppendLog(fmt.Sprintf("tree deleted %s", removeTreeId))
+			return
+		}
+
+		// Default to printing by index
+		dirvcs.PrintTree(index)
 	},
 }
 
 func init() {
-	treeCmd.Flags().IntVarP(&index, "index", "i", 0, "Previous Index of Persisted Tree")
+	treeCmd.Flags().IntVarP(&index, "index", "i", 0, "Index of persisted tree to view")
 	treeCmd.Flags().BoolVarP(&list, "list", "l", false, "List all persisted trees")
-	treeCmd.Flags().StringVar(&uuid, "uuid", "", "List all persisted trees")
-	treeCmd.Flags().StringVar(&removeTreeId, "remove", "", "Removes a persisted trees given its UUID")
+	treeCmd.Flags().StringVar(&uuid, "uuid", "", "View tree snapshot by UUID")
+	treeCmd.Flags().StringVar(&removeTreeId, "remove", "", "Remove persisted tree snapshot by UUID")
 
 	rootCmd.AddCommand(treeCmd)
 }

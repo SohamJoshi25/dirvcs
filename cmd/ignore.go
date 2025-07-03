@@ -1,6 +1,3 @@
-/*
-Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
@@ -11,41 +8,52 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var listIgnore bool
-var removeIgnore string
+var (
+	listIgnore   bool
+	removeIgnore string
+)
 
 var ignoreCmd = &cobra.Command{
 	Use:   "ignore [patterns]",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Manage ignore rules for files and folders",
+	Long: `The 'ignore' command lets you manage which files or folders should be ignored by DirVCS.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+You can:
+- Add patterns to ignore
+- List current ignore patterns
+- Remove specific patterns from ignore list`,
+	Example: `
+  dirvcs ignore node_modules build
+  dirvcs ignore --list
+  dirvcs ignore --remove build
+`,
 	Run: func(cmd *cobra.Command, args []string) {
 		Init.CheckInit()
 
-		showList := cmd.Flags().Changed("list")
-
 		if removeIgnore != "" {
 			ignore.RemoveIgnore(removeIgnore)
-			fmt.Println("Ignore List updated")
-		} else if showList {
-			ignore.PrintIgnore()
-		} else {
-			if len(args) == 0 {
-				fmt.Println("Please provide at least one pattern to ignore")
-				return
-			}
-			ignore.ApendIgnore(args)
-			fmt.Println("Ignore List updated")
+			fmt.Println("Pattern removed from ignore list.")
+			return
 		}
+
+		if listIgnore {
+			ignore.PrintIgnore()
+			return
+		}
+
+		if len(args) == 0 {
+			fmt.Println("Error: Please provide at least one pattern or use --list / --remove")
+			return
+		}
+
+		ignore.ApendIgnore(args)
+		fmt.Println("Patterns added to ignore list.")
 	},
 }
 
 func init() {
-	ignoreCmd.Flags().BoolVarP(&listIgnore, "list", "l", false, "Used to show all files and folders ignored")
-	ignoreCmd.Flags().StringVar(&removeIgnore, "remove", "", "Remove from .ignore file")
+	ignoreCmd.Flags().BoolVarP(&listIgnore, "list", "l", false, "List all ignored files and folders")
+	ignoreCmd.Flags().StringVar(&removeIgnore, "remove", "", "Remove a pattern from the ignore list")
+
 	rootCmd.AddCommand(ignoreCmd)
 }

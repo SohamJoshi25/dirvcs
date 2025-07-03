@@ -1,41 +1,38 @@
 package cmd
 
 import (
-	"fmt"
-
-	Dirvcs "dirvcs/internal/dirvcs"
+	"dirvcs/internal/dirvcs"
 	Init "dirvcs/internal/services/init"
 
 	"github.com/spf13/cobra"
 )
 
-var ExportTreeUUID string
-var path string
+var (
+	exportTreeUUID string
+	path           string
+)
 
 var exportCmd = &cobra.Command{
 	Use:   "export",
-	Short: "Export a directory tree to .json format",
-	Long: `Export a directory as a versioned tree.
-You can optionally specify a UUID, or it will use default logic.`,
+	Short: "Export a persisted directory tree to JSON format",
+	Long: `The 'export' command outputs a directory tree (by UUID or default) 
+into a JSON file.
+
+You must provide the directory path to export the snapshot to.`,
+	Example: `
+  dirvcs export --path ./output
+  dirvcs export --uuid 123e4567-e89b-12d3-a456-426614174000 --path ./tree.json
+`,
 	Run: func(cmd *cobra.Command, args []string) {
 		Init.CheckInit()
-
-		if ExportTreeUUID == "" {
-			fmt.Println("Exporting directory tree without UUID...")
-		} else {
-			fmt.Printf("Exporting directory tree with UUID: %s\n", ExportTreeUUID)
-		}
-
-		fmt.Printf("Path to export: %s\n", path)
-
-		Dirvcs.ExportTree(ExportTreeUUID, path)
+		dirvcs.ExportTree(exportTreeUUID, path)
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(exportCmd)
-
-	exportCmd.Flags().StringVarP(&path, "path", "p", "", "Path to directory (required)")
-	exportCmd.Flags().StringVarP(&ExportTreeUUID, "uuid", "u", "", "Optional UUID for export")
+	exportCmd.Flags().StringVarP(&path, "path", "p", "", "Path to export the tree as JSON (required)")
+	exportCmd.Flags().StringVarP(&exportTreeUUID, "uuid", "u", "", "UUID of the tree to export (optional)")
 	exportCmd.MarkFlagRequired("path")
+
+	rootCmd.AddCommand(exportCmd)
 }

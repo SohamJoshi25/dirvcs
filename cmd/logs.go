@@ -1,6 +1,3 @@
-/*
-Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
@@ -10,16 +7,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// logsCmd represents the logs command
 var logsCmd = &cobra.Command{
 	Use:   "logs",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Display internal operation logs for DirVCS",
+	Long: `The 'logs' command shows a chronological list of DirVCS internal operations
+such as persist actions, deletes, comparisons, and more.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Useful for understanding what actions were performed.`,
+	Example: `
+  dirvcs logs
+`,
 	Run: func(cmd *cobra.Command, args []string) {
 		Init.CheckInit()
 		Logs.PrintLogs()

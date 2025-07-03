@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 
 	Init "dirvcs/internal/services/init"
@@ -12,39 +11,50 @@ import (
 	"github.com/spf13/viper"
 )
 
-var setKey, setValue string
+var (
+	setKey   string
+	setValue string
+)
 
 var configCmd = &cobra.Command{
 	Use:   "config",
-	Short: "View or update configuration",
-	Long:  "View all current configuration values, or update a specific config key like tree_limit.",
-	Run: func(cmd *cobra.Command, args []string) {
+	Short: "View or update DirVCS configuration",
+	Long: `The 'config' command allows you to view current configuration values 
+or update specific keys like 'treelimit'.
 
+Settings are stored in the DirVCS YAML config file.`,
+	Example: `
+  dirvcs config                         # Show all current configuration
+  dirvcs config --set-key treelimit --set-value 50
+  dirvcs config --set-key autoCompress --set-value true
+`,
+	Run: func(cmd *cobra.Command, args []string) {
 		Init.CheckInit()
 
-		// Update if --set is used
+		// Update config
 		if setKey != "" && setValue != "" {
-			switch setKey {
-			case "treelimit":
+			if setKey == "treelimit" {
 				val, err := strconv.Atoi(setValue)
 				if err != nil {
-					fmt.Println("treelimit must be an integer")
+					fmt.Println("Error: treelimit must be an integer")
 					return
 				}
-				viper.Set("treelimit", val)
-			default:
+				viper.Set(setKey, val)
+			} else {
 				viper.Set(setKey, setValue)
 			}
 
 			if err := viper.WriteConfig(); err != nil {
-				log.Fatalf("Failed to write config: %v", err)
+				fmt.Println("Error writing config:", err)
+				return
 			}
-			fmt.Printf("Updated config: %s = %s\n", setKey, setValue)
+
+			fmt.Printf("Config updated: %s = %s\n", setKey, setValue)
 			Log.AppendLog(fmt.Sprintf("Updated config: %s = %s", setKey, setValue))
 			return
 		}
 
-		// If no --set, display all config values
+		// Show all config if no --set
 		fmt.Println("Current Configuration:")
 		for _, key := range viper.AllKeys() {
 			fmt.Printf("  %s: %v\n", key, viper.Get(key))
@@ -53,8 +63,8 @@ var configCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(configCmd)
-
 	configCmd.Flags().StringVar(&setKey, "set-key", "", "Configuration key to set (e.g., treelimit)")
 	configCmd.Flags().StringVar(&setValue, "set-value", "", "Value to set for the configuration key")
+
+	rootCmd.AddCommand(configCmd)
 }

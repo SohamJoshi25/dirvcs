@@ -1,11 +1,12 @@
 package cmd
 
 import (
-	Path "dirvcs/internal/data/path"
-	color "dirvcs/internal/services/color"
 	"fmt"
 	"log"
 	"os"
+
+	Path "dirvcs/internal/data/path"
+	color "dirvcs/internal/services/color"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -13,29 +14,52 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:   "dirvcs",
-	Short: "Hugo is a very fast static site generator",
-	Long: `A Fast and Flexible Static Site Generator built with
-                love by spf13 and friends in Go.
-                Complete documentation is available at https://gohugo.io/documentation/`,
+	Short: "DirVCS is a lightweight directory version control system",
+	Long: `DirVCS is a CLI tool that allows you to snapshot, compare, and manage versions of directory structures.
+
+It supports persisting directory states, comparing changes, pruning old versions, and more.
+`,
 	Version: "v0.1.0",
+	Example: `
+  dirvcs init                          # Initialize a new dirvcs repo
+  dirvcs persist -m "Snapshot msg"    # Persist current state
+  dirvcs changes               # Compare tree with previous snapshot
+`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(color.Color("Welcome to DIR VCS", color.Blue))
+		_ = cmd.Help() // show help by default
 	},
 }
 
 func init() {
+	// Version formatting
 	rootCmd.SetVersionTemplate(`{{.Version}}` + "\n")
 
+	// Persistent Flags (available to all subcommands)
+	rootCmd.PersistentFlags().String("config", "", "Path to config file (default is BASE_PATH/config.yaml)")
+	rootCmd.PersistentFlags().Bool("verbose", false, "Enable verbose logging")
+
+	// Bind to viper
+	viper.BindPFlag("config", rootCmd.PersistentFlags().Lookup("config"))
+	viper.BindPFlag("verbose", rootCmd.PersistentFlags().Lookup("verbose"))
+
+	// Config file setup
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(Path.BASE_PATH)
-
 	viper.SetDefault("treelimit", 20)
+	viper.SetDefault("verbose", false)
 
+	// Read config
 	if err := viper.ReadInConfig(); err != nil {
 		log.Fatalf("Failed to read config file: %v", err)
 	}
 
+	// Optional verbose logging
+	if viper.GetBool("verbose") {
+		fmt.Println("Using config:", viper.ConfigFileUsed())
+	}
+
+	fmt.Println(color.Color("Welcome to DIR VCS", color.Blue))
 }
 
 func Execute() {
