@@ -25,6 +25,9 @@ import (
 	Struct "dirvcs/internal/structs"
 )
 
+var GINDENT string
+var VERBOSE bool
+
 func SHA256(str string) string {
 	hasher := sha256.New()
 	hasher.Write([]byte(str))
@@ -135,16 +138,14 @@ func printTree(node *Struct.FileNode, indent string, color string) {
 		name = fmt.Sprintf("'%s'", node.Name)
 	}
 
-	verbose := viper.GetBool("verbose")
-
-	if verbose {
+	if VERBOSE {
 		name = fmt.Sprintf("%s %s %s", name, node.ModificationTime, node.Hash)
 	}
 
 	fmt.Println(Color.Color(indent+name, color))
 
 	for _, child := range node.Children {
-		printTree(child, indent+"|---", color)
+		printTree(child, indent+GINDENT, color)
 	}
 }
 
@@ -157,8 +158,6 @@ func saveTreeJson(root *Struct.FileNode, path string) error {
 }
 
 func CompareLevel(oldNode *Struct.FileNode, newNode *Struct.FileNode, indent string) {
-
-	verbose := viper.GetBool("verbose")
 
 	if oldNode.Hash == newNode.Hash {
 		return
@@ -193,7 +192,7 @@ func CompareLevel(oldNode *Struct.FileNode, newNode *Struct.FileNode, indent str
 				printTree(oldChild, indent, Color.Red)
 			} else {
 
-				if verbose {
+				if VERBOSE {
 					fmt.Printf(Color.Red+"%s'%s' was Deleted. %s %s\n"+Color.Reset, indent, oldChild.Name, oldChild.ModificationTime, oldChild.Hash)
 				} else {
 					fmt.Printf(Color.Red+"%s'%s' was Deleted.\n"+Color.Reset, indent, oldChild.Name)
@@ -204,13 +203,13 @@ func CompareLevel(oldNode *Struct.FileNode, newNode *Struct.FileNode, indent str
 
 			if newChild.IsDir {
 
-				if verbose {
+				if VERBOSE {
 					fmt.Printf(Color.Gray+"%s'%s' %s %s\n"+Color.Reset, indent, oldChild.Name, oldChild.ModificationTime, oldChild.Hash)
 				} else {
 					fmt.Printf(Color.Gray+"%s'%s'\n"+Color.Reset, indent, newChild.Name)
 				}
 			} else {
-				if verbose {
+				if VERBOSE {
 					fmt.Printf(Color.Yellow+"%s'%s' has SOME CHANGES. %s %s\n"+Color.Reset, indent, oldChild.Name, oldChild.ModificationTime, oldChild.Hash)
 				} else {
 					fmt.Printf(Color.Yellow+"%s'%s' has SOME CHANGES.\n"+Color.Reset, indent, newChild.Name)
@@ -221,7 +220,7 @@ func CompareLevel(oldNode *Struct.FileNode, newNode *Struct.FileNode, indent str
 			childNodeExist[childIndex] = true
 
 			if oldChild.IsDir {
-				CompareLevel(oldChild, newChild, indent+"|---")
+				CompareLevel(oldChild, newChild, indent+GINDENT)
 			}
 
 		} else {
@@ -236,7 +235,7 @@ func CompareLevel(oldNode *Struct.FileNode, newNode *Struct.FileNode, indent str
 				printTree(newNode.Children[index], indent, Color.Green)
 			} else {
 
-				if verbose {
+				if VERBOSE {
 					fmt.Printf(Color.Green+"%s'%s' was Created. %s %s\n"+Color.Reset, indent, newNode.Name, newNode.ModificationTime, newNode.Hash)
 				} else {
 					fmt.Printf(Color.Green+"%s'%s' was Created.\n"+Color.Reset, indent, newNode.Children[index].Name)
@@ -250,6 +249,7 @@ func CompareLevel(oldNode *Struct.FileNode, newNode *Struct.FileNode, indent str
 //Public
 
 func GenerateTree(BASE_PATH, message string) {
+	initConfig()
 
 	info, err := os.Stat(BASE_PATH)
 	if err != nil {
@@ -280,14 +280,18 @@ func GenerateTree(BASE_PATH, message string) {
 	}
 
 	start := time.Now()
+	treePath, errabs := filepath.Abs(path.Join(Path.TREES_PATH, fmt.Sprintf(`%s.gz`, uuid)))
+	if errabs != nil {
+		log.Fatalln("Unable to get Absolute Path")
+	}
 
 	DirRecursveInfo(rootNode)
-	SaveTree(rootNode, path.Join(Path.TREES_PATH, fmt.Sprintf(`%s.gz`, uuid)))
+	SaveTree(rootNode, treePath)
 
 	var TreeLog *Struct.TreeLog = &Struct.TreeLog{
 		Timestamp: time.Now().Format(time.RFC3339),
 		Message:   message,
-		TreePath:  path.Join(Path.TREES_PATH, fmt.Sprintf(`%s.gz`, uuid)),
+		TreePath:  treePath,
 		TreeHash:  rootNode.Hash,
 		TreeId:    uuid.String(),
 	}
@@ -305,6 +309,7 @@ func GenerateTree(BASE_PATH, message string) {
 }
 
 func PrintTree(index int) {
+	initConfig()
 
 	if index == 0 {
 
@@ -371,6 +376,7 @@ func PrintTree(index int) {
 }
 
 func PrintTreeUUID(uuid string) {
+	initConfig()
 
 	treelog, err := TLog.GetByUuid(uuid)
 
@@ -422,6 +428,7 @@ func ExportTree(uuid string, filepath string) {
 }
 
 func CompareTree(oldId, newId string) {
+	initConfig()
 
 	var oldTreeLog *Struct.TreeLog
 	var err1 error
@@ -488,7 +495,42 @@ func CompareTree(oldId, newId string) {
 
 	if oldTree.Hash != newTree.Hash {
 		fmt.Printf(Color.Gray+"'%s'\n"+Color.Reset, newTree.Path)
-		CompareLevel(oldTree, newTree, "|---")
+		CompareLevel(oldTree, newTree, GINDENT)
+	} else {
+		fmt.Println("No Changes Found")
 	}
 
+}
+
+func CompareTreePath(oldPath, newPath string) {
+	initConfig()
+
+	newTree, err1 := LoadTree(newPath)
+	oldTree, err2 := LoadTree(oldPath)
+
+	if err1 != nil || err2 != nil {
+		fmt.Printf("Could Not Load Tree ")
+		if err1 != nil {
+			fmt.Println(err1)
+		}
+		if err2 != nil {
+			fmt.Println(err2)
+		}
+		os.Exit(1)
+	}
+
+	if oldTree.Hash != newTree.Hash {
+		fmt.Printf(Color.Gray+"'%s'\n"+Color.Reset, newTree.Path)
+		CompareLevel(oldTree, newTree, GINDENT)
+	} else {
+		fmt.Println("No Changes Found")
+	}
+}
+
+func initConfig() {
+	GINDENT = viper.GetString("indent")
+	if GINDENT == "" {
+		GINDENT = "|--"
+	}
+	VERBOSE = viper.GetBool("verbose")
 }

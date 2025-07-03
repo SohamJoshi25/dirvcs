@@ -8,24 +8,36 @@ import (
 )
 
 var (
-	oldId string
-	newId string
+	oldId   string
+	newId   string
+	oldPath string
+	newPath string
 )
 
 var changesCmd = &cobra.Command{
 	Use:   "changes",
-	Short: "Compare two directory tree states",
-	Long: `The 'changes' command compares two tree snapshots by UUID,
-or compares a previous snapshot to the current working directory.
+	Short: "Compare two directory tree states or two exported snapshot files",
+	Long: `The 'changes' command compares:
+- Two directory tree snapshots by UUID
+- A snapshot UUID and current working directory
+- Or two .gz exported snapshot files using absolute paths
 
-If --old is not provided, the most recent snapshot is used as the base.
-If --new is not provided, it compares against the current directory.`,
+If --old and --new UUIDs are not provided, it defaults to comparing the last snapshot with the current directory.
+
+Alternatively, you can specify --old-path and --new-path to compare two exported gzip files directly.`,
 	Example: `
   dirvcs changes --old abc-uuid --new def-uuid
   dirvcs changes --old abc-uuid
-  dirvcs changes                     # default: last snapshot vs working directory
+  dirvcs changes
+  dirvcs changes --old-path /full/path/1.gz --new-path /full/path/2.gz
 `,
 	Run: func(cmd *cobra.Command, args []string) {
+		if oldPath != "" && newPath != "" {
+			Dirvcs.CompareTreePath(oldPath, newPath)
+			return
+		}
+
+		// UUID mode
 		Init.CheckInit()
 		Dirvcs.CompareTree(oldId, newId)
 	},
@@ -34,6 +46,9 @@ If --new is not provided, it compares against the current directory.`,
 func init() {
 	changesCmd.Flags().StringVarP(&oldId, "old", "o", "", "UUID of base snapshot (optional, defaults to last)")
 	changesCmd.Flags().StringVarP(&newId, "new", "n", "", "UUID of target snapshot (optional, defaults to current working directory)")
+
+	changesCmd.Flags().StringVar(&oldPath, "old-path", "", "Absolute path to first snapshot .gz file")
+	changesCmd.Flags().StringVar(&newPath, "new-path", "", "Absolute path to second snapshot .gz file")
 
 	rootCmd.AddCommand(changesCmd)
 }

@@ -17,7 +17,7 @@ It allows you to **persist**, **compare**, **export**, **prune**, and **track ch
 - Manage ignored files/folders
 - View internal logs
 - Easy YAML-based configuration
-- Faster than git in some aspect
+- Faster than git in some aspects
 
 ---
 

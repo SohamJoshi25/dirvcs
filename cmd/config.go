@@ -44,6 +44,8 @@ Settings are stored in the DirVCS YAML config file.`,
 					return
 				}
 				viper.Set(setKey, val)
+			} else if setKey == "verbose" {
+				viper.Set(setKey, setValue == "true" || setValue == "True")
 			} else {
 				viper.Set(setKey, setValue)
 			}

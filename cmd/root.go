@@ -40,6 +40,7 @@ func init() {
 	viper.AddConfigPath(Path.BASE_PATH)
 	viper.SetDefault("treelimit", 20)
 	viper.SetDefault("verbose", false)
+	viper.SetDefault("indent", "|---")
 
 	// Read config
 	if err := viper.ReadInConfig(); err != nil {
