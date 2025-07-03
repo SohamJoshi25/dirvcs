@@ -27,7 +27,8 @@ import (
 
 var GINDENT string
 var VERBOSE bool
-var EXPORT bool
+var SIMPLE_LOG bool
+var SIMPLE_LOG_PATH string
 
 func SHA256(str string) string {
 	hasher := sha256.New()
@@ -177,6 +178,10 @@ func printTreeExport(node *Struct.FileNode, changeNode *Struct.FileNodeChanges, 
 		fmt.Println(Color.Color(indent+name, color))
 	}
 
+	if SIMPLE_LOG {
+		AppendToFile(SIMPLE_LOG_PATH, indent+name)
+	}
+
 	for _, child := range node.Children {
 		nodeChangesChild := Struct.ToFileNodeChanges(child, operation)
 		changeNode.Children = append(changeNode.Children, nodeChangesChild)
@@ -244,6 +249,13 @@ func CompareLevel(oldNode, newNode *Struct.FileNode, changeLogNode *Struct.FileN
 					fmt.Printf(Color.Red+"%s'%s' Deleted.\n"+Color.Reset, indent, oldChild.Name)
 				}
 
+				if SIMPLE_LOG {
+					if VERBOSE {
+						AppendToFile(SIMPLE_LOG_PATH, fmt.Sprintf("%s'%s' Deleted. %s %s", indent, oldChild.Name, oldChild.ModificationTime, oldChild.Hash))
+					} else {
+						AppendToFile(SIMPLE_LOG_PATH, fmt.Sprintf("%s'%s' Deleted.", indent, oldChild.Name))
+					}
+				}
 			}
 
 		} else if status == 1 {
@@ -257,14 +269,32 @@ func CompareLevel(oldNode, newNode *Struct.FileNode, changeLogNode *Struct.FileN
 				} else if print {
 					fmt.Printf(Color.Gray+"%s'%s'\n"+Color.Reset, indent, newChild.Name)
 				}
+
+				if SIMPLE_LOG {
+					if VERBOSE {
+						AppendToFile(SIMPLE_LOG_PATH, fmt.Sprintf("%s'%s' %s %s", indent, oldChild.Name, oldChild.ModificationTime, oldChild.Hash))
+					} else {
+						AppendToFile(SIMPLE_LOG_PATH, fmt.Sprintf("%s'%s'", indent, newChild.Name))
+					}
+				}
+
 				childChangeLogNode.Operation = "MODIFIED CHILDREN"
 				changeLogNode.Children = append(changeLogNode.Children, childChangeLogNode)
 
 			} else {
+
 				if VERBOSE && print {
 					fmt.Printf(Color.Yellow+"%s'%s' MODIFIED. %s %s\n"+Color.Reset, indent, oldChild.Name, oldChild.ModificationTime, oldChild.Hash)
 				} else if print {
 					fmt.Printf(Color.Yellow+"%s'%s' MODIFIED.\n"+Color.Reset, indent, newChild.Name)
+				}
+
+				if SIMPLE_LOG {
+					if VERBOSE {
+						AppendToFile(SIMPLE_LOG_PATH, fmt.Sprintf("%s'%s' MODIFIED. %s %s", indent, oldChild.Name, oldChild.ModificationTime, oldChild.Hash))
+					} else {
+						AppendToFile(SIMPLE_LOG_PATH, fmt.Sprintf("%s'%s' MODIFIED.", indent, newChild.Name))
+					}
 				}
 
 				changeLogNode.Children = append(changeLogNode.Children, childChangeLogNode)
@@ -294,11 +324,33 @@ func CompareLevel(oldNode, newNode *Struct.FileNode, changeLogNode *Struct.FileN
 				if VERBOSE && print {
 					fmt.Printf(Color.Green+"%s'%s' Created. %s %s\n"+Color.Reset, indent, newNode.Name, newNode.ModificationTime, newNode.Hash)
 				} else if print {
-					fmt.Printf(Color.Green+"%s'%s' Created.\n"+Color.Reset, indent, newNode.Children[index].Name)
+					fmt.Printf(Color.Green+"%s'%s' Created.\n"+Color.Reset, indent, newNode.Name)
+				}
+
+				if SIMPLE_LOG {
+					if VERBOSE {
+						AppendToFile(SIMPLE_LOG_PATH, fmt.Sprintf("%s'%s' Created. %s %s", indent, newNode.Name, newNode.ModificationTime, newNode.Hash))
+					} else {
+						AppendToFile(SIMPLE_LOG_PATH, fmt.Sprintf("%s'%s' Created.", indent, newNode.Name))
+					}
 				}
 			}
 		}
 
+	}
+}
+
+func AppendToFile(filename string, content string) {
+	// Open file in append mode, create if it doesn't exist
+	file, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Fatalf("Failed to open file: %v", err)
+	}
+	defer file.Close()
+
+	// Append the content
+	if _, err := file.WriteString(content + "\n"); err != nil {
+		log.Fatalf("Failed to write to file: %v", err)
 	}
 }
 
@@ -481,7 +533,7 @@ func ExportTree(uuid string, filepath string) {
 	fmt.Printf("\nTime took %s", elapsed)
 }
 
-func CompareTree(oldId, newId, exportpath string, printTree bool) {
+func CompareTree(oldId, newId, exportpath string, exporttype int, printTree bool) {
 	initConfig()
 
 	start := time.Now()
@@ -563,12 +615,28 @@ func CompareTree(oldId, newId, exportpath string, printTree bool) {
 			Children:         []*Struct.FileNodeChanges{},
 		}
 
-		fmt.Printf(Color.Gray+"\n'%s'\n"+Color.Reset, newTree.Path)
-		CompareLevel(oldTree, newTree, changlogtree, GINDENT, printTree)
+		if printTree {
+			fmt.Printf(Color.Gray+"\n'%s'\n"+Color.Reset, newTree.Path)
+		}
 
-		if EXPORT {
+		_ = os.Remove(exportpath)
+
+		if exporttype == 1 {
+
+			SIMPLE_LOG = true
+			SIMPLE_LOG_PATH = exportpath
+			CompareLevel(oldTree, newTree, changlogtree, GINDENT, printTree)
+			fmt.Printf("\nChanglog Generated at %s\n", exportpath)
+
+		} else if exporttype == 2 {
+
+			SIMPLE_LOG = false
+			CompareLevel(oldTree, newTree, changlogtree, GINDENT, printTree)
 			saveChangelogJson(changlogtree, exportpath)
 			fmt.Printf("\nChanglog Generated at %s\n", exportpath)
+
+		} else {
+			CompareLevel(oldTree, newTree, changlogtree, GINDENT, printTree)
 		}
 
 		elapsed := time.Since(start)
@@ -579,7 +647,7 @@ func CompareTree(oldId, newId, exportpath string, printTree bool) {
 	}
 }
 
-func CompareTreePath(oldPath, newPath, exportpath string, printTree bool) {
+func CompareTreePath(oldPath, newPath, exportpath string, exporttype int, printTree bool) {
 	initConfig()
 
 	start := time.Now()
@@ -587,7 +655,7 @@ func CompareTreePath(oldPath, newPath, exportpath string, printTree bool) {
 	oldTree, err2 := LoadTree(oldPath)
 
 	if err1 != nil || err2 != nil {
-		fmt.Printf("Could Not Load Tree ")
+		fmt.Printf("Could Not Load Tree")
 		if err1 != nil {
 			fmt.Println(err1)
 		}
@@ -611,12 +679,28 @@ func CompareTreePath(oldPath, newPath, exportpath string, printTree bool) {
 			Children:         []*Struct.FileNodeChanges{},
 		}
 
-		fmt.Printf(Color.Gray+"\n'%s'\n"+Color.Reset, newTree.Path)
-		CompareLevel(oldTree, newTree, changlogtree, GINDENT, printTree)
+		if printTree {
+			fmt.Printf(Color.Gray+"\n'%s'\n"+Color.Reset, newTree.Path)
+		}
 
-		if EXPORT {
+		_ = os.Remove(exportpath)
+
+		if exporttype == 1 {
+
+			SIMPLE_LOG = true
+			SIMPLE_LOG_PATH = exportpath
+			CompareLevel(oldTree, newTree, changlogtree, GINDENT, printTree)
+			fmt.Printf("\nChanglog Generated at %s\n", exportpath)
+
+		} else if exporttype == 2 {
+
+			SIMPLE_LOG = false
+			CompareLevel(oldTree, newTree, changlogtree, GINDENT, printTree)
 			saveChangelogJson(changlogtree, exportpath)
 			fmt.Printf("\nChanglog Generated at %s\n", exportpath)
+
+		} else {
+			CompareLevel(oldTree, newTree, changlogtree, GINDENT, printTree)
 		}
 
 		elapsed := time.Since(start)
@@ -633,5 +717,4 @@ func initConfig() {
 		GINDENT = "|--"
 	}
 	VERBOSE = viper.GetBool("verbose")
-	EXPORT = viper.GetBool("changes.export")
 }

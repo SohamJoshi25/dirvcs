@@ -40,7 +40,8 @@ func init() {
 	viper.AddConfigPath(Path.BASE_PATH)
 	viper.SetDefault("treelimit", 20)
 	viper.SetDefault("verbose", false)
-	viper.SetDefault("changes.export", true)
+	viper.SetDefault("changes.export", false)
+	viper.SetDefault("changes.print", true)
 	viper.SetDefault("indent", "|---")
 
 	// Read config
