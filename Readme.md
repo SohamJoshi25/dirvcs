@@ -25,12 +25,12 @@ It allows you to **persist**, **compare**, **export**, **prune**, and **track ch
 
 > _Add your screenshots here_
 
-\`\`\`
+```
 📁 Placeholder for:
 - Snapshot comparison output
 - Tree structure export
 - Example command usage
-\`\`\`
+```
 
 ---
 

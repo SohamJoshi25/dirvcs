@@ -1,0 +1,9 @@
+|---'Readme.md' MODIFIED.
+|---'changelog.json' Deleted.
+|---'changelog.txt' MODIFIED.
+|---'cmd'
+|---|---'root.go' MODIFIED.
+|---'d' DELETED.
+|---|---'e' DELETED.
+|---|---|---'f' DELETED.
+|---'dirvcs.exe' MODIFIED.
