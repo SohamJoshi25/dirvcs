@@ -8,10 +8,12 @@ import (
 )
 
 var (
-	oldId   string
-	newId   string
-	oldPath string
-	newPath string
+	oldId      string
+	newId      string
+	oldPath    string
+	newPath    string
+	exportPath string
+	skipPrint  bool
 )
 
 var changesCmd = &cobra.Command{
@@ -33,13 +35,13 @@ Alternatively, you can specify --old-path and --new-path to compare two exported
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		if oldPath != "" && newPath != "" {
-			Dirvcs.CompareTreePath(oldPath, newPath)
+			Dirvcs.CompareTreePath(oldPath, newPath, exportPath, skipPrint)
 			return
 		}
 
 		// UUID mode
 		Init.CheckInit()
-		Dirvcs.CompareTree(oldId, newId)
+		Dirvcs.CompareTree(oldId, newId, exportPath, skipPrint)
 	},
 }
 
@@ -49,6 +51,8 @@ func init() {
 
 	changesCmd.Flags().StringVar(&oldPath, "old-path", "", "Absolute path to first snapshot .gz file")
 	changesCmd.Flags().StringVar(&newPath, "new-path", "", "Absolute path to second snapshot .gz file")
+	changesCmd.Flags().StringVar(&exportPath, "export", "./changelog.json", "A path to to export change logs to. \ne.g. /path/to/changeslog.tree \nDefaults to './changelog.json' ")
+	changesCmd.Flags().BoolVar(&skipPrint, "skip-print", true, "Skips Printing to Command")
 
 	rootCmd.AddCommand(changesCmd)
 }

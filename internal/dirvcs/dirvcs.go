@@ -27,6 +27,7 @@ import (
 
 var GINDENT string
 var VERBOSE bool
+var EXPORT bool
 
 func SHA256(str string) string {
 	hasher := sha256.New()
@@ -129,11 +130,11 @@ func printTree(node *Struct.FileNode, indent string, color string) {
 
 	switch color {
 	case Color.Red:
-		name = fmt.Sprintf("'%s' was DELETED.", node.Name)
+		name = fmt.Sprintf("'%s' DELETED.", node.Name)
 	case Color.Yellow:
-		name = fmt.Sprintf("'%s' has SOME CHANGES.", node.Name)
+		name = fmt.Sprintf("'%s' MODIFIED.", node.Name)
 	case Color.Green:
-		name = fmt.Sprintf("'%s' was CREATED.", node.Name)
+		name = fmt.Sprintf("'%s' CREATED.", node.Name)
 	default:
 		name = fmt.Sprintf("'%s'", node.Name)
 	}
@@ -149,6 +150,40 @@ func printTree(node *Struct.FileNode, indent string, color string) {
 	}
 }
 
+func printTreeExport(node *Struct.FileNode, changeNode *Struct.FileNodeChanges, indent string, color string, print bool) {
+	var name string
+	var operation string
+
+	switch color {
+	case Color.Red:
+		name = fmt.Sprintf("'%s' DELETED.", node.Name)
+		operation = "DELETED"
+	case Color.Yellow:
+		name = fmt.Sprintf("'%s' MODIFIED.", node.Name)
+		operation = "MODIFIED"
+	case Color.Green:
+		name = fmt.Sprintf("'%s' CREATED.", node.Name)
+		operation = "CREATED"
+	default:
+		name = fmt.Sprintf("'%s'", node.Name)
+		operation = "MODIFIED CHILD"
+	}
+
+	if VERBOSE {
+		name = fmt.Sprintf("%s %s %s", name, node.ModificationTime, node.Hash)
+	}
+
+	if print {
+		fmt.Println(Color.Color(indent+name, color))
+	}
+
+	for _, child := range node.Children {
+		nodeChangesChild := Struct.ToFileNodeChanges(child, operation)
+		changeNode.Children = append(changeNode.Children, nodeChangesChild)
+		printTreeExport(child, nodeChangesChild, indent+GINDENT, color, print)
+	}
+}
+
 func saveTreeJson(root *Struct.FileNode, path string) error {
 	data, err := json.MarshalIndent(root, "", "  ")
 	if err != nil {
@@ -157,7 +192,15 @@ func saveTreeJson(root *Struct.FileNode, path string) error {
 	return os.WriteFile(path, data, 0644)
 }
 
-func CompareLevel(oldNode *Struct.FileNode, newNode *Struct.FileNode, indent string) {
+func saveChangelogJson(root *Struct.FileNodeChanges, path string) error {
+	data, err := json.MarshalIndent(root, "", "  ")
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(path, data, 0644)
+}
+
+func CompareLevel(oldNode, newNode *Struct.FileNode, changeLogNode *Struct.FileNodeChanges, indent string, print bool) {
 
 	if oldNode.Hash == newNode.Hash {
 		return
@@ -186,41 +229,51 @@ func CompareLevel(oldNode *Struct.FileNode, newNode *Struct.FileNode, indent str
 	for _, oldChild := range oldNode.Children {
 		status, newChild, childIndex := getChildFromNewNode(oldChild.Hash, oldChild.Name)
 
-		if status == 0 {
-			//fmt.Printf(Green+"%s'%s' was CREATED.\n"+Reset, indent, oldChild.Name)
+		if status == 0 { //Deleted
+
+			deletedChild := Struct.ToFileNodeChanges(oldChild, "DELETED")
+			changeLogNode.Children = append(changeLogNode.Children, deletedChild)
+
 			if oldChild.IsDir {
-				printTree(oldChild, indent, Color.Red)
+				printTreeExport(oldChild, deletedChild, indent, Color.Red, print)
 			} else {
 
-				if VERBOSE {
-					fmt.Printf(Color.Red+"%s'%s' was Deleted. %s %s\n"+Color.Reset, indent, oldChild.Name, oldChild.ModificationTime, oldChild.Hash)
-				} else {
-					fmt.Printf(Color.Red+"%s'%s' was Deleted.\n"+Color.Reset, indent, oldChild.Name)
+				if VERBOSE && print {
+					fmt.Printf(Color.Red+"%s'%s' Deleted. %s %s\n"+Color.Reset, indent, oldChild.Name, oldChild.ModificationTime, oldChild.Hash)
+				} else if print {
+					fmt.Printf(Color.Red+"%s'%s' Deleted.\n"+Color.Reset, indent, oldChild.Name)
 				}
 
 			}
+
 		} else if status == 1 {
 
-			if newChild.IsDir {
+			childChangeLogNode := Struct.ToFileNodeChanges(oldChild, "MODIFIED")
 
-				if VERBOSE {
+			if newChild.IsDir { // Unmodified
+
+				if VERBOSE && print {
 					fmt.Printf(Color.Gray+"%s'%s' %s %s\n"+Color.Reset, indent, oldChild.Name, oldChild.ModificationTime, oldChild.Hash)
-				} else {
+				} else if print {
 					fmt.Printf(Color.Gray+"%s'%s'\n"+Color.Reset, indent, newChild.Name)
 				}
+				childChangeLogNode.Operation = "MODIFIED CHILDREN"
+				changeLogNode.Children = append(changeLogNode.Children, childChangeLogNode)
+
 			} else {
-				if VERBOSE {
-					fmt.Printf(Color.Yellow+"%s'%s' has SOME CHANGES. %s %s\n"+Color.Reset, indent, oldChild.Name, oldChild.ModificationTime, oldChild.Hash)
-				} else {
-					fmt.Printf(Color.Yellow+"%s'%s' has SOME CHANGES.\n"+Color.Reset, indent, newChild.Name)
+				if VERBOSE && print {
+					fmt.Printf(Color.Yellow+"%s'%s' MODIFIED. %s %s\n"+Color.Reset, indent, oldChild.Name, oldChild.ModificationTime, oldChild.Hash)
+				} else if print {
+					fmt.Printf(Color.Yellow+"%s'%s' MODIFIED.\n"+Color.Reset, indent, newChild.Name)
 				}
 
+				changeLogNode.Children = append(changeLogNode.Children, childChangeLogNode)
 			}
 
 			childNodeExist[childIndex] = true
 
 			if oldChild.IsDir {
-				CompareLevel(oldChild, newChild, indent+GINDENT)
+				CompareLevel(oldChild, newChild, childChangeLogNode, indent+GINDENT, print)
 			}
 
 		} else {
@@ -229,16 +282,19 @@ func CompareLevel(oldNode *Struct.FileNode, newNode *Struct.FileNode, indent str
 	}
 
 	for index, isCounted := range childNodeExist {
-		if !isCounted {
+		if !isCounted { // Created
+
+			createdChangeNode := Struct.ToFileNodeChanges(newNode.Children[index], "CREATED")
+			changeLogNode.Children = append(changeLogNode.Children, createdChangeNode)
 
 			if newNode.Children[index].IsDir {
-				printTree(newNode.Children[index], indent, Color.Green)
+				printTreeExport(newNode.Children[index], createdChangeNode, indent, Color.Green, print)
 			} else {
 
-				if VERBOSE {
-					fmt.Printf(Color.Green+"%s'%s' was Created. %s %s\n"+Color.Reset, indent, newNode.Name, newNode.ModificationTime, newNode.Hash)
-				} else {
-					fmt.Printf(Color.Green+"%s'%s' was Created.\n"+Color.Reset, indent, newNode.Children[index].Name)
+				if VERBOSE && print {
+					fmt.Printf(Color.Green+"%s'%s' Created. %s %s\n"+Color.Reset, indent, newNode.Name, newNode.ModificationTime, newNode.Hash)
+				} else if print {
+					fmt.Printf(Color.Green+"%s'%s' Created.\n"+Color.Reset, indent, newNode.Children[index].Name)
 				}
 			}
 		}
@@ -250,6 +306,7 @@ func CompareLevel(oldNode *Struct.FileNode, newNode *Struct.FileNode, indent str
 
 func GenerateTree(BASE_PATH, message string) {
 	initConfig()
+	start := time.Now()
 
 	info, err := os.Stat(BASE_PATH)
 	if err != nil {
@@ -279,7 +336,6 @@ func GenerateTree(BASE_PATH, message string) {
 		Children:         []*Struct.FileNode{},
 	}
 
-	start := time.Now()
 	treePath, errabs := filepath.Abs(path.Join(Path.TREES_PATH, fmt.Sprintf(`%s.gz`, uuid)))
 	if errabs != nil {
 		log.Fatalln("Unable to get Absolute Path")
@@ -377,7 +433,7 @@ func PrintTree(index int) {
 
 func PrintTreeUUID(uuid string) {
 	initConfig()
-
+	start := time.Now()
 	treelog, err := TLog.GetByUuid(uuid)
 
 	TLog.PrintTreeLog(treelog)
@@ -393,8 +449,6 @@ func PrintTreeUUID(uuid string) {
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}
-
-	start := time.Now()
 
 	printTree(rootNode, "", Color.Gray)
 
@@ -427,8 +481,10 @@ func ExportTree(uuid string, filepath string) {
 	fmt.Printf("\nTime took %s", elapsed)
 }
 
-func CompareTree(oldId, newId string) {
+func CompareTree(oldId, newId, exportpath string, printTree bool) {
 	initConfig()
+
+	start := time.Now()
 
 	var oldTreeLog *Struct.TreeLog
 	var err1 error
@@ -494,17 +550,39 @@ func CompareTree(oldId, newId string) {
 	}
 
 	if oldTree.Hash != newTree.Hash {
-		fmt.Printf(Color.Gray+"'%s'\n"+Color.Reset, newTree.Path)
-		CompareLevel(oldTree, newTree, GINDENT)
+
+		changlogtree := &Struct.FileNodeChanges{
+			Operation:        "MODIFIED CHILDREN",
+			Name:             newTree.Name,
+			Path:             newTree.Path,
+			Depth:            0,
+			IsDir:            true,
+			ModificationTime: newTree.ModificationTime,
+			Size:             newTree.Size,
+			Hash:             newTree.Hash,
+			Children:         []*Struct.FileNodeChanges{},
+		}
+
+		fmt.Printf(Color.Gray+"\n'%s'\n"+Color.Reset, newTree.Path)
+		CompareLevel(oldTree, newTree, changlogtree, GINDENT, printTree)
+
+		if EXPORT {
+			saveChangelogJson(changlogtree, exportpath)
+			fmt.Printf("\nChanglog Generated at %s\n", exportpath)
+		}
+
+		elapsed := time.Since(start)
+		fmt.Printf("\nTime took %s", elapsed)
+
 	} else {
 		fmt.Println("No Changes Found")
 	}
-
 }
 
-func CompareTreePath(oldPath, newPath string) {
+func CompareTreePath(oldPath, newPath, exportpath string, printTree bool) {
 	initConfig()
 
+	start := time.Now()
 	newTree, err1 := LoadTree(newPath)
 	oldTree, err2 := LoadTree(oldPath)
 
@@ -520,8 +598,30 @@ func CompareTreePath(oldPath, newPath string) {
 	}
 
 	if oldTree.Hash != newTree.Hash {
-		fmt.Printf(Color.Gray+"'%s'\n"+Color.Reset, newTree.Path)
-		CompareLevel(oldTree, newTree, GINDENT)
+
+		changlogtree := &Struct.FileNodeChanges{
+			Operation:        "MODIFIED CHILDREN",
+			Name:             newTree.Name,
+			Path:             newTree.Path,
+			Depth:            0,
+			IsDir:            true,
+			ModificationTime: newTree.ModificationTime,
+			Size:             newTree.Size,
+			Hash:             newTree.Hash,
+			Children:         []*Struct.FileNodeChanges{},
+		}
+
+		fmt.Printf(Color.Gray+"\n'%s'\n"+Color.Reset, newTree.Path)
+		CompareLevel(oldTree, newTree, changlogtree, GINDENT, printTree)
+
+		if EXPORT {
+			saveChangelogJson(changlogtree, exportpath)
+			fmt.Printf("\nChanglog Generated at %s\n", exportpath)
+		}
+
+		elapsed := time.Since(start)
+		fmt.Printf("\nTime took %s", elapsed)
+
 	} else {
 		fmt.Println("No Changes Found")
 	}
@@ -533,4 +633,5 @@ func initConfig() {
 		GINDENT = "|--"
 	}
 	VERBOSE = viper.GetBool("verbose")
+	EXPORT = viper.GetBool("changes.export")
 }
