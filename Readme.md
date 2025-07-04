@@ -3,7 +3,7 @@
 # DirVCS 
 
 <p >
-  <img src="assets/logo.png" alt="DirVCS Banner" width="50"/>
+  <img src="assets/logo.png" alt="DirVCS Banner" width="60"/>
 </p>
 
 **DirVCS** is a lightweight version control system for directory structures, inspired by Git but optimized for snapshots of file trees.
@@ -134,27 +134,58 @@ Outputs:
 
 - printing to terminal
 ```dirvcs changes```
+
 ![DirVCS Banner](assets/changes.png "DirVCS")
+
+<br>
 
 > verbose printing to terminal 
 ```dirvcs changes -v```
+
 ![DirVCS Banner](assets/changesverbose.png "DirVCS")
+
+<br>
 
 > Exporting changlogs in text 
 ```dirvcs changes --export-simple ./changlog.txt```
+
 ![DirVCS Banner](assets/changlogtxt.png "DirVCS") 
+
+<br>
 
 > Exporting changlogs in verbose text 
 ```dirvcs changes --export-simple ./changlog.txt -v```
+
 ![DirVCS Banner](assets/changlogtxtv.png "DirVCS")
+
+<br>
 
 > Exporting changlogs in json
 ```dirvcs changes --export-simple ./changlog.txt -v```
+
 ![DirVCS Banner](assets/changlogjson.png "DirVCS")
+
+<br>
 
 > Default Exporting changlogs (json/txt depends on config.verbose)
 ```dirvcs changes --export-simple ./changlog.txt -v```
+
 ![DirVCS Banner](assets/defaultexport.png "DirVCS") 
+
+<br>
+
+> Default Exporting changlogs using absolute path
+```bash
+dirvcs changes --old-path 'E:\Soham\Coding Files\Go\projects\dirvcs\.dirvcs\trees\17822654-176b-4ba5-b77a-01aae8039395.gz' --new-path 'E:\Soham\Coding Files\Go\projects\dirvcs\.dirvcs\trees\1cbb604d-c4cb-42fe-b52e-5496a40f8c57.gz' -p
+'E:\Soham\Coding Files\Go\projects\dirvcs'
+├──'Readme.md' MODIFIED.
+├──'a' CREATED.
+├──├──'b' CREATED.
+├──├──├──'c' CREATED.
+├──'E:\Soham\Coding Files\Go\projects\dirvcs' Created.
+
+Time took 24.5586ms
+```
 ---
 
 ### ignore
@@ -183,7 +214,7 @@ Export a snapshot or current directory tree as JSON.
     dirvcs export --uuid -u <UUID> --path -p ./changlog.json
 ```
 Exported 'changlog.json'
-```bash
+```json
 {
     "name": "cmd",
     "path": "E:Go\\projects\\dirvcs\\cmd",
