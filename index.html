@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>dirvcs — Directory Version Control System</title>
- <link rel="icon" type="image/x-icon" href="/assets/logo.png">
+  <link rel="icon" type="image/x-icon" href="/assets/logo.png">
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -14,44 +14,65 @@
       color: #222;
     }
 
-    .container {
-      max-width: 800px;
-      margin: 4rem auto;
-      padding: 2rem;
-      margin-top: 2rem;
+    header {
+      background-color: #222;
+      color: white;
+      padding: 3rem 1rem;
+      text-align: center;
     }
 
-    h1 {
-      font-size: 2.75rem;
-      margin-bottom: 1rem;
+    header h1 {
+      font-size: 3rem;
+      margin: 0 0 0.5rem;
+    }
+
+    header p {
+      font-size: 1.25rem;
+      max-width: 700px;
+      margin: 0 auto 1.5rem;
+    }
+
+    .button {
+      display: inline-block;
+      background-color: #007acc;
+      color: white;
+      padding: 0.6em 1.2em;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      margin: 0.5rem;
+    }
+
+    .button.github {
+      background-color: #24292e;
+    }
+
+    .container {
+      max-width: 850px;
+      margin: 2rem auto;
+      padding: 1rem 2rem;
+    }
+
+    section {
+      margin-bottom: 3rem;
     }
 
     h2 {
-      font-size: 1.6rem;
-      margin-top: 2.5rem;
+      font-size: 1.8rem;
       margin-bottom: 1rem;
     }
 
     p {
       font-size: 1.1rem;
       line-height: 1.7;
-      margin-bottom: 1rem;
     }
 
     ul {
-      margin-bottom: 1rem;
-      padding-left: 1.2rem;
+      padding-left: 1.4rem;
     }
 
     li {
       margin-bottom: 0.5rem;
-    }
-
-    code {
-      background: #eee;
-      padding: 0.2em 0.4em;
-      border-radius: 4px;
-      font-family: monospace;
     }
 
     pre {
@@ -62,17 +83,24 @@
       font-size: 0.95rem;
     }
 
+    code {
+      background: #eee;
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+    }
+
     footer {
       text-align: center;
       font-size: 0.95rem;
       margin-top: 4rem;
-      padding: 1.5rem 1rem;
-      background-color: #f0f0f0;
+      padding: 2rem 1rem;
+      background-color: #222;
       border-top: 1px solid #ddd;
+      color:#ddd;
     }
 
     footer a {
-      color: #444;
+      color: #ddd;
       text-decoration: none;
       margin: 0 0.5rem;
     }
@@ -80,89 +108,98 @@
     footer a:hover {
       text-decoration: underline;
     }
+
+    .downloadLinks{
+      display: block;
+      margin-top: 7px;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
+
+  <header>
     <h1>DIRVCS</h1>
     <p>
-      <strong>dirvcs</strong> is a command-line version control tool built specifically for directory structures.
-      Unlike Git, it does not track content — instead, it tracks and compares snapshots of your folder hierarchy.
+      Track your folder structure — not your files. A simple CLI tool to snapshot and compare directory layouts over time. Ideal for builds, CI pipelines, releases, and audits.
     </p>
+    <a href="https://github.com/sohamjoshi25/dirvcs" target="_blank" class="button github">⭐ View on GitHub</a>
+  </header>
 
-    <h2>⬇️ Download</h2>
-    <p>
-        <a href="./bin/windows/dirvcs.exe" download>
-            Download dirvcs for windows
-        </a>
-        <br />
-        <a href="./bin/macos/dirvcs" download>
-            Download dirvcs for macos
-        </a>
-        <br />
-       <a href="./bin/linux/dirvcs" download>
-            Download dirvcs for linux
-        </a>
-    </p>
+  <main class="container">
+    <section id="download">
+      <h2>⬇️ Download dirvcs</h2>
+      <p>Choose your OS to get started:</p>
+      <a href="./bin/windows/dirvcs.exe" class="downloadLinks" download>Download for Windows (.exe)</a>
+      <a href="./bin/macos/dirvcs" class="downloadLinks" download>Download for macOS</a>
+      <a href="./bin/linux/dirvcs" class="downloadLinks" download>Download for Linux</a>
+    </section>
+
+    <section>
+      <h2>What is dirvcs?</h2>
+      <p>
+        <strong>dirvcs</strong> is a version control system for your <em>directory structure</em>.  
+        It doesn't track file content — instead, it snapshots your folder layout and highlights any structural changes like file moves, additions, or deletions.
+      </p>
+      <p>
+        Think of it as Git, but focused purely on how your folders evolve — perfect for tracking output builds, release assets, backups, and more.
+      </p>
+    </section>
+
+    <section>
+      <h2>Why use it?</h2>
+      <ul>
+        <li>Detect unexpected folder changes across builds or deployments</li>
+        <li>Compare two versions of a directory (e.g., prod vs dev, backup vs local)</li>
+        <li>Automate structure audits in CI/CD pipelines</li>
+        <li>Quickly visualize directory diffs — as text or JSON</li>
+        <li>No Git setup, remote, or complex tracking — just drop and run</li>
+      </ul>
+    </section>
+
+     <section>
+      <p>View what exactly changed</p>
+      <img src="./assets/changes.png" alt="">
+    </section>
 
 
-    <h2>✨ Features</h2>
-    <ul>
-      <li>Track directory tree structure over time using snapshots</li>
-      <li>Detect new, deleted, and moved files/folders</li>
-      <li>Export changes as JSON or human-readable tree diffs</li>
-      <li>Print changes with custom indentation</li>
-      <li>Override behavior with config (YAML-based)</li>
-      <li>Rebase, prune, and manage snapshot history</li>
-    </ul>
-
-    <h2>🧪 Example Commands</h2>
-    <pre>
-dirvcs init
+    <section>
+      <h2>Quick Start</h2>
+      <pre>
+dirvcs init     # Start tracking the current directory
 dirvcs persist -m "Initial snapshot"
 dirvcs changes
 dirvcs changes --old abc123 --new def456 --export-verbose
-dirvcs config --set indent="|__"
-    </pre>
+      </pre>
+    </section>
 
-    <h2>🛠️ Commands</h2>
-    <ul>
-      <li><code>init</code> — Start tracking a directory</li>
-      <li><code>persist</code> — Save a versioned snapshot</li>
-      <li><code>changes</code> — Compare two snapshots or snapshot vs current</li>
-      <li><code>logs</code> — View snapshot history</li>
-      <li><code>showtree</code> — Show tree of a given snapshot</li>
-      <li><code>config</code> — Set and manage CLI preferences</li>
-    </ul>
+    <section>
+      <h2>Available Commands</h2>
+      <ul>
+        <li><code>init</code> — Start tracking a directory</li>
+        <li><code>persist</code> — Save a versioned snapshot</li>
+        <li><code>changes</code> — Compare two snapshots or snapshot vs current</li>
+        <li><code>logs</code> — View snapshot history</li>
+        <li><code>showtree</code> — Show the full directory tree from a snapshot</li>
+        <li><code>config</code> — Update CLI settings (indent, export, etc.)</li>
+      </ul>
+    </section>
 
-    <h2>🧰 Configurable Settings</h2>
-    <p>Settings are managed via a <code>.dirvcs/config.yaml</code> file. Example:</p>
-    <pre>
+    <section>
+      <h2>Configuration</h2>
+      <p>
+        Customize behavior using a YAML file at <code>.dirvcs/config.yaml</code>.  
+        Here's an example:
+      </p>
+      <pre>
 indent: "|--"
 prune_limit: 20
 verbose: true
 export: false
-    </pre>
+      </pre>
+    </section>
 
-    <h2>📦 Architecture Overview</h2>
-    <p>
-      dirvcs is written in Go, leveraging:
-    </p>
-    <ul>
-      <li><strong>cobra</strong> — for CLI command structure</li>
-      <li><strong>viper</strong> — for flexible configuration</li>
-      <li><strong>custom structs</strong> — for modeling file trees, hashing, and change tracking</li>
-    </ul>
 
-    <h2>🚀 Use Cases</h2>
-    <ul>
-      <li>Track changes in build/output directories</li>
-      <li>Compare zipped deployments or production folders</li>
-      <li>Check if folder contents were altered unexpectedly</li>
-      <li>Create reproducible structure logs during CI/CD</li>
-    </ul>
-
-  </div>
+  </main>
 
   <footer>
     <p>Made by Soham Joshi</p>
@@ -176,4 +213,3 @@ export: false
 
 </body>
 </html>
-
