@@ -1,7 +1,6 @@
-/*
-Copyright © 2025 Soham Joshi <sohamjoshichinchwad@gmail.com>
-
-*/
+// Licensed under the Polyform Noncommercial License 1.0.0
+// You may use, copy, modify, and distribute this software for noncommercial purposes.
+// See LICENSE for details
 
 package cmd
 

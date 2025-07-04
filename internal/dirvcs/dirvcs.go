@@ -1,6 +1,8 @@
-package dirvcs
+// Licensed under the Polyform Noncommercial License 1.0.0
+// You may use, copy, modify, and distribute this software for noncommercial purposes.
+// See LICENSE for details
 
-//Speed : 13.6 GB (14,66,08,95,020 bytes) 2,31,946 Files, 25,984 Folders in 15.1408093s
+package dirvcs
 
 import (
 	"compress/gzip"

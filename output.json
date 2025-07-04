@@ -3,19 +3,39 @@
   "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs",
   "depth": 0,
   "isDir": true,
-  "modificationTime": "2025-07-04T08:05:05+05:30",
-  "size": 11378439,
-  "hash": "6c72f7089dfa34782ffb347b00a46dcfb629753f72dc02a99c088698b2bf8c4d",
+  "modificationTime": "2025-07-04T08:51:41+05:30",
+  "size": 11386689,
+  "hash": "151c2a4775a82026830a2b3136343c0cf495195196639b923c102564ed685459",
   "children": [
+    {
+      "name": "LICENSE",
+      "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\LICENSE",
+      "depth": 1,
+      "isDir": false,
+      "modificationTime": "2025-07-04T08:36:30+05:30",
+      "size": 4702,
+      "hash": "a24d509e47b7c8b17cd516dd5e647d635eee3e03ec778c84720fb16a1d39c06b",
+      "children": null
+    },
     {
       "name": "Readme.md",
       "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\Readme.md",
       "depth": 1,
       "isDir": false,
-      "modificationTime": "2025-07-04T08:02:09+05:30",
-      "size": 3894,
-      "hash": "5056682422325695691003aa674825e1a433c09fdd593e2bf7014d23ac90cf8b",
+      "modificationTime": "2025-07-04T08:51:00+05:30",
+      "size": 4075,
+      "hash": "1f99a2a5c629844b7f93081ef967fc114dcd6517c42df3ece68cee3de754742c",
       "children": null
+    },
+    {
+      "name": "assets",
+      "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\assets",
+      "depth": 1,
+      "isDir": true,
+      "modificationTime": "2025-07-04T08:41:46+05:30",
+      "size": 0,
+      "hash": "33f1610a1bb4d0e4bce7770dcf99efb407cc2c8d310b26502d0a1ea3b8183236",
+      "children": []
     },
     {
       "name": "cmd",
@@ -23,17 +43,17 @@
       "depth": 1,
       "isDir": true,
       "modificationTime": "2025-07-03T09:22:47+05:30",
-      "size": 14523,
-      "hash": "431e31b37b3659e8b71228cabe52e48f16793b306e8193ba93b0846cf8afd929",
+      "size": 16023,
+      "hash": "d77d2ed33439c6c8b748e5c2c82e7abb1b545d88eece3073384db19d0380fccb",
       "children": [
         {
           "name": "changes.go",
           "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\cmd\\changes.go",
           "depth": 2,
           "isDir": false,
-          "modificationTime": "2025-07-04T03:15:02+05:30",
-          "size": 4597,
-          "hash": "07040ce569e5a01c6c341a55b52d62bc1985bd6a118abe967d0e54d2881c2f9b",
+          "modificationTime": "2025-07-04T08:39:17+05:30",
+          "size": 4771,
+          "hash": "6c99122e965cb441a02741016b4164a9624182313d6558855165b06c56781005",
           "children": null
         },
         {
@@ -41,9 +61,9 @@
           "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\cmd\\config.go",
           "depth": 2,
           "isDir": false,
-          "modificationTime": "2025-07-04T02:48:09+05:30",
-          "size": 2034,
-          "hash": "12d9c35af7f59e467912d0282d5be80a4cb72910d7109acd8cd09abc950da0c9",
+          "modificationTime": "2025-07-04T08:39:10+05:30",
+          "size": 2208,
+          "hash": "8d239719a6317aac4eaa2558834a13642c1b40890ae99ae33ac5481a668227ce",
           "children": null
         },
         {
@@ -51,9 +71,9 @@
           "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\cmd\\export.go",
           "depth": 2,
           "isDir": false,
-          "modificationTime": "2025-07-03T10:31:36+05:30",
-          "size": 972,
-          "hash": "0bc9911e45c582b04b7b2c71419cc5900b512142487df80406134014f9ad10c7",
+          "modificationTime": "2025-07-04T08:39:06+05:30",
+          "size": 1146,
+          "hash": "fce1f6c29a08ab9e83198ef15185555fc3246359c5f20d759d91e2d4ac401e3a",
           "children": null
         },
         {
@@ -61,9 +81,9 @@
           "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\cmd\\ignore.go",
           "depth": 2,
           "isDir": false,
-          "modificationTime": "2025-07-03T10:31:08+05:30",
-          "size": 1314,
-          "hash": "77c6d3271f9d4f2aecfb968f9073126d8333f234ecc2113b793b080586f844d4",
+          "modificationTime": "2025-07-04T08:39:01+05:30",
+          "size": 1488,
+          "hash": "baff243456586e5cd10d2a10a843898113d181445ab1160b5668f66dae350a22",
           "children": null
         },
         {
@@ -71,9 +91,9 @@
           "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\cmd\\init.go",
           "depth": 2,
           "isDir": false,
-          "modificationTime": "2025-07-04T07:46:08+05:30",
-          "size": 803,
-          "hash": "aa71238b4a5ad400b26b36433faddbc3886a3f83a600aefac4595ddd3a853614",
+          "modificationTime": "2025-07-04T08:38:56+05:30",
+          "size": 907,
+          "hash": "a2093d9af7de2f0c4d0cfb8c516b01f1c582b297099db49e6b2d5a2dfe0956dc",
           "children": null
         },
         {
@@ -81,9 +101,9 @@
           "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\cmd\\logs.go",
           "depth": 2,
           "isDir": false,
-          "modificationTime": "2025-07-03T10:30:47+05:30",
-          "size": 596,
-          "hash": "5c2fb8ea0f7cfec4026ae41d73e1c7d204ef2ec898710634f6d573cfff3bdf55",
+          "modificationTime": "2025-07-04T08:38:48+05:30",
+          "size": 770,
+          "hash": "dccb9ed43686ca8d7cac7fd8833521bda358a79b006b83b2e224ff238e43ac7e",
           "children": null
         },
         {
@@ -91,9 +111,9 @@
           "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\cmd\\persist.go",
           "depth": 2,
           "isDir": false,
-          "modificationTime": "2025-07-04T07:46:56+05:30",
-          "size": 838,
-          "hash": "f66f443a52ae1fd4ffce98f08d86c5db8c18cac4fd07305bfa2184bfe078a375",
+          "modificationTime": "2025-07-04T08:38:44+05:30",
+          "size": 1012,
+          "hash": "9d717f9eb0241679d8a8d555a90698ecbeb1929c37f27b605107503d571dca8f",
           "children": null
         },
         {
@@ -101,9 +121,9 @@
           "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\cmd\\root.go",
           "depth": 2,
           "isDir": false,
-          "modificationTime": "2025-07-04T07:45:11+05:30",
-          "size": 1650,
-          "hash": "e49e68cc96e7763dab27f59e3a760db68a15fbb295ab21db48502dad37d1477d",
+          "modificationTime": "2025-07-04T08:38:41+05:30",
+          "size": 1828,
+          "hash": "006f055fa84641d6e94553bc583822ce326927512936864c593558182415f9f2",
           "children": null
         },
         {
@@ -111,9 +131,9 @@
           "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\cmd\\tree.go",
           "depth": 2,
           "isDir": false,
-          "modificationTime": "2025-07-03T11:38:43+05:30",
-          "size": 1719,
-          "hash": "e7c4973b1b6ef938ce62144163c2bd3f89f64c88a4a43c8d644dede4cc1b36dd",
+          "modificationTime": "2025-07-04T08:38:37+05:30",
+          "size": 1893,
+          "hash": "ab0b02bf23fb5e85f1e76923246f55a45a76a60c8a25dae274759442e103fea7",
           "children": null
         }
       ]
@@ -154,8 +174,8 @@
       "depth": 1,
       "isDir": true,
       "modificationTime": "2025-07-02T22:35:56+05:30",
-      "size": 28349,
-      "hash": "dba8047a744357a61daed22a5e1425ce8cf48ec616b02de21c743e51b9f26a03",
+      "size": 30038,
+      "hash": "942f59c743450ff56f579af6f50ab1fc9eb50be753ece707f56fea44cf620fbb",
       "children": [
         {
           "name": "data",
@@ -163,8 +183,8 @@
           "depth": 2,
           "isDir": true,
           "modificationTime": "2025-07-02T19:41:34+05:30",
-          "size": 369,
-          "hash": "3772ff39ec0021e3e035931cdeb54c341914081407167134c71aa1bdc65e3496",
+          "size": 547,
+          "hash": "6f1454f2d9ea65af9bcf7bdeee1dd67a08d9cd0da9d67fe33621ddd078983caa",
           "children": [
             {
               "name": "path",
@@ -172,17 +192,17 @@
               "depth": 3,
               "isDir": true,
               "modificationTime": "2025-07-02T19:41:34+05:30",
-              "size": 369,
-              "hash": "2ffbe6e5fed85df3727823ae190ef72c91135ea150b70380ccc91479e2c8445c",
+              "size": 547,
+              "hash": "2f92aa587628bf3b0c6bbb045ea943d1e868500f231455fa884746f31a79b0ac",
               "children": [
                 {
                   "name": "path.go",
                   "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal\\data\\path\\path.go",
                   "depth": 4,
                   "isDir": false,
-                  "modificationTime": "2025-07-02T14:04:52+05:30",
-                  "size": 369,
-                  "hash": "b65ff3b302db7fe09c6a0cf785645791965a09f7427e594b48b483ffebe53725",
+                  "modificationTime": "2025-07-04T08:38:32+05:30",
+                  "size": 547,
+                  "hash": "33ea90bdfd061788f4b7595217d04b8caf5065da95f5708c99ba1095433fd672",
                   "children": null
                 }
               ]
@@ -195,17 +215,17 @@
           "depth": 2,
           "isDir": true,
           "modificationTime": "2025-07-01T18:11:04+05:30",
-          "size": 17932,
-          "hash": "757119fb706eeaffad3cd2ebe706a74b2362b8252dfe6672ede2fef011216e85",
+          "size": 18019,
+          "hash": "5b21318ec827234f43e3d2896ac2aab3876f31491ebe22ee6759f582cef1cbaf",
           "children": [
             {
               "name": "dirvcs.go",
               "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal\\dirvcs\\dirvcs.go",
               "depth": 3,
               "isDir": false,
-              "modificationTime": "2025-07-04T08:05:00+05:30",
-              "size": 17932,
-              "hash": "9472153b97bde8e172a4b9f0fbf371782c2601c9defae084882ba9ee5f5a26d5",
+              "modificationTime": "2025-07-04T08:38:30+05:30",
+              "size": 18019,
+              "hash": "85dc6b35f960fad0530406eee7b6a2b873c0db4cc05750d971dd33e08cf02f1a",
               "children": null
             }
           ]
@@ -216,8 +236,8 @@
           "depth": 2,
           "isDir": true,
           "modificationTime": "2025-07-02T19:41:11+05:30",
-          "size": 8294,
-          "hash": "27cc381fad0ee6c8b5ebab9818772a74ea667fca78d790b2dca7c12c3edceb27",
+          "size": 9184,
+          "hash": "53f481ea809d34ef3538050c8610bc9d19dafb8d922338eeb144a64bde468006",
           "children": [
             {
               "name": "color",
@@ -225,17 +245,17 @@
               "depth": 3,
               "isDir": true,
               "modificationTime": "2025-07-02T19:40:17+05:30",
-              "size": 353,
-              "hash": "8d3a0ba91cf910c229cdf21fe7f3d2cfadf06ac0e4eaa17f0545339afe69d173",
+              "size": 531,
+              "hash": "319c8e5a87500fc8f23970eed955ca7acc1001242d966555926da767cb365e4e",
               "children": [
                 {
                   "name": "color.go",
                   "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal\\services\\color\\color.go",
                   "depth": 4,
                   "isDir": false,
-                  "modificationTime": "2025-07-02T14:35:01+05:30",
-                  "size": 353,
-                  "hash": "05ca8924c19fee7a42babeda0c13962ccad9f9b51b6238e307c79a4ed220db9c",
+                  "modificationTime": "2025-07-04T08:38:15+05:30",
+                  "size": 531,
+                  "hash": "19a2a636bc46c6325986f352b1f5ec190fda21e55f601170c4f98cfa0e41e9fa",
                   "children": null
                 }
               ]
@@ -246,17 +266,17 @@
               "depth": 3,
               "isDir": true,
               "modificationTime": "2025-07-02T19:40:51+05:30",
-              "size": 1596,
-              "hash": "9427827dba09d10086d08a9ac19db52ca61c593218a8e580d59fb4130d896ecd",
+              "size": 1774,
+              "hash": "d5a57508e506ae496de26a962924a1506c99208875ad559c1c711d93453f3b53",
               "children": [
                 {
                   "name": "ignore.go",
                   "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal\\services\\ignore\\ignore.go",
                   "depth": 4,
                   "isDir": false,
-                  "modificationTime": "2025-07-03T09:20:19+05:30",
-                  "size": 1596,
-                  "hash": "ac3c977210e4fec53340aee80592ebaba0a5c3152c65290d7173a6f7602bded0",
+                  "modificationTime": "2025-07-04T08:38:10+05:30",
+                  "size": 1774,
+                  "hash": "4c8c97fc6e5956864ebf14ff5c75214241156c1e662cf7b622f3c26e91f70721",
                   "children": null
                 }
               ]
@@ -267,17 +287,17 @@
               "depth": 3,
               "isDir": true,
               "modificationTime": "2025-07-02T19:40:37+05:30",
-              "size": 1277,
-              "hash": "8f76eafe9bf9e847b14a6101b4ca1a88fd4e9a5e261ceb4f0c4f15ba520c2268",
+              "size": 1455,
+              "hash": "1bae8c8f7219f41887f42bc9b6355e8ff0acae7317b6a578d4471d5e7aaa051b",
               "children": [
                 {
                   "name": "createInit.go",
                   "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal\\services\\init\\createInit.go",
                   "depth": 4,
                   "isDir": false,
-                  "modificationTime": "2025-07-03T10:18:32+05:30",
-                  "size": 1277,
-                  "hash": "9503a20f3408835e2d27ebe3b9a54167698aad95db527af7fff73af5881ba40e",
+                  "modificationTime": "2025-07-04T08:38:04+05:30",
+                  "size": 1455,
+                  "hash": "edd226ce748a0520f63c8cd086fe8f5b77c21b4d54f4ff36c127ef022e3990a6",
                   "children": null
                 }
               ]
@@ -288,17 +308,17 @@
               "depth": 3,
               "isDir": true,
               "modificationTime": "2025-07-02T19:41:11+05:30",
-              "size": 750,
-              "hash": "c2ccc1248e75fd95af80b601f60aee23a1b24c4719ab56a1671bf6369d516307",
+              "size": 928,
+              "hash": "f7baf66a458fdf519f74d51bf9c2d513ccb3b2ca092474ed99df6fefdf7f0043",
               "children": [
                 {
                   "name": "logging.go",
                   "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal\\services\\logging\\logging.go",
                   "depth": 4,
                   "isDir": false,
-                  "modificationTime": "2025-07-03T08:12:09+05:30",
-                  "size": 750,
-                  "hash": "a15eb4b5d82a79f77be7c61a6c59e54a71e1d7f1f0f9dcaff47772f5bf60310f",
+                  "modificationTime": "2025-07-04T08:37:59+05:30",
+                  "size": 928,
+                  "hash": "aa2f559ca45dc8905b9b8ecbecf9ee02d8928e4d0fa5f4dcc00b1b556a7f3cfe",
                   "children": null
                 }
               ]
@@ -309,17 +329,17 @@
               "depth": 3,
               "isDir": true,
               "modificationTime": "2025-07-02T19:40:12+05:30",
-              "size": 4318,
-              "hash": "51841f45e2a6cbbed8825661f845d363810ef24814582ab550bdc38c320f5a15",
+              "size": 4496,
+              "hash": "842127582f1f99ce59a777c9fee60cedb3f6a768b1b967e9f5abc705f15b4530",
               "children": [
                 {
                   "name": "treelogs.go",
                   "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal\\services\\treelogs\\treelogs.go",
                   "depth": 4,
                   "isDir": false,
-                  "modificationTime": "2025-07-04T08:04:46+05:30",
-                  "size": 4318,
-                  "hash": "b75aa2f7e47855457450c252a4fcab7535ee8f9d1e7024ff2e79f0dbd4b868a0",
+                  "modificationTime": "2025-07-04T08:37:54+05:30",
+                  "size": 4496,
+                  "hash": "629fdd4b72aa1ec5a792fc81b21a7b3df622be4a883e58377ed5167d9931bd2d",
                   "children": null
                 }
               ]
@@ -332,17 +352,17 @@
           "depth": 2,
           "isDir": true,
           "modificationTime": "2025-07-02T15:00:19+05:30",
-          "size": 1754,
-          "hash": "27c990f6848b9b863ee18e1912c3f2d40ae4d1d60741cb3a8eedf8491e6ba560",
+          "size": 2288,
+          "hash": "1d42d151008b122d24568f8e50311b0dd22cadb012e03bd55a8dd7016454ab6e",
           "children": [
             {
               "name": "config.go",
               "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal\\structs\\config.go",
               "depth": 3,
               "isDir": false,
-              "modificationTime": "2025-07-03T09:46:13+05:30",
-              "size": 80,
-              "hash": "6816daa201a6009597b8a3e9ca3eb893ca22bff08f47494be2af3a9003d9a278",
+              "modificationTime": "2025-07-04T08:37:50+05:30",
+              "size": 258,
+              "hash": "47f271b2326754d4e455f4b1e67a4f269d81b1f8116290dd9917a5f344a070e2",
               "children": null
             },
             {
@@ -350,9 +370,9 @@
               "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal\\structs\\filenode.go",
               "depth": 3,
               "isDir": false,
-              "modificationTime": "2025-07-03T21:01:21+05:30",
-              "size": 1446,
-              "hash": "94330ac4bb6a867b00bb95b3ee21608dcfdba0e1765fddf3938b85e513da4f49",
+              "modificationTime": "2025-07-04T08:37:46+05:30",
+              "size": 1624,
+              "hash": "654da8368ba7e1ee3f3e9f743b81f6a1bba7744185622d4eeee6731b1a96e64d",
               "children": null
             },
             {
@@ -360,9 +380,9 @@
               "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal\\structs\\treelog.go",
               "depth": 3,
               "isDir": false,
-              "modificationTime": "2025-07-02T22:00:05+05:30",
-              "size": 228,
-              "hash": "15b902121c0ecc769f69e399291d85686248291e863d55d873c388faf01cdcac",
+              "modificationTime": "2025-07-04T08:37:05+05:30",
+              "size": 406,
+              "hash": "726c5458ac093c751143544c540f6b8858110141856d17e4e325e92e11c6032b",
               "children": null
             }
           ]
@@ -374,9 +394,9 @@
       "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\main.go",
       "depth": 1,
       "isDir": false,
-      "modificationTime": "2025-07-02T21:59:30+05:30",
-      "size": 73,
-      "hash": "695faff2ee2d32061457de57bf46bf8b0c1febc477610cec8af938d3d83ce3e8",
+      "modificationTime": "2025-07-04T08:37:10+05:30",
+      "size": 251,
+      "hash": "c35afcb669ca51002a4c33e4f230ef84f2f93c6825af39d8672d319951d60f4d",
       "children": null
     }
   ]
