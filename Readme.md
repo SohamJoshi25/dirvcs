@@ -1,183 +1,157 @@
 # DirVCS
 
-**DirVCS** is a lightweight version control system for directory structures, inspired by Git but tailored for snapshots of file trees.
+**DirVCS** is a lightweight version control system for directory structures, inspired by Git but optimized for snapshots of file trees.
 
-**10x Faster** than **git** for directory tracking. **Speed** : 13.6 GB (14,66,08,95,020 bytes) 2,31,946 Files, 25,984 Folders in **15.1408093s** for indexing.
+Designed to be fast and efficient for tracking large directory structures.
 
-It allows you to **persist**, **compare**, **export**, **prune**, and **track changes** in directory states easily from the command line.
+> Benchmarked: 13.6 GB • 231,946 files • 25,984 folders  
+> Indexing Time: ~15.14 seconds
 
 ---
 
-## 🚀 Features
+## Features
 
 - Snapshot (persist) current directory state
-- Compare any two snapshots or snapshot vs working directory
-- List and remove old snapshots
-- Export directory trees to JSON
-- Manage ignored files/folders
-- View internal logs
-- Easy YAML-based configuration
-- Faster than git in some aspects
+- Compare any two snapshots or with the current working directory
+- List, view, and remove old snapshots
+- Export directory trees to JSON format
+- Ignore specific files and folders using a .ignore file
+- View internal logs of operations
+- YAML-based configuration system
+- Optimized performance for large-scale directory trees
 
 ---
 
-## 📸 Screenshots
+## Installation
 
-> _Add your screenshots here_
-
-```
-📁 Placeholder for:
-- Snapshot comparison output
-- Tree structure export
-- Example command usage
-```
-
----
-
-## 🛠️ Installation
-
-> Requires **Go 1.20+**
-
+Requires **Go 1.20+**
 ```bash
-git clone https://github.com/SohamJoshi25/dirvcs
-cd dirvcs
-go build -o dirvcs
-./dirvcs --help
+    git clone https://github.com/SohamJoshi25/dirvcs
+    cd dirvcs
+    go build -o dirvcs
+    ./dirvcs --help
 ```
-
 ---
 
-## 📚 Commands
+## Command Reference
 
-### `init`
+### init
 
+Initialize a new DirVCS repository.
 ```bash
-dirvcs init
+    dirvcs init
 ```
-
-Initialize a new DirVCS repository in the current directory.
-
 ---
 
-### `persist`
+### persist
 
+Create a snapshot of the current directory state.
 ```bash
-dirvcs persist -m "Initial snapshot"
+    dirvcs persist -m "Initial snapshot"
 ```
-
-Persist the current directory as a versioned snapshot.
-
 ---
 
-### `tree`
+### tree
 
+List, view, or remove persisted snapshots.
 ```bash
-dirvcs tree --list
-dirvcs tree --index 1
-dirvcs tree --uuid <UUID>
-dirvcs tree --remove <UUID>
+    dirvcs tree --list
+    dirvcs tree --index 1
+    dirvcs tree --uuid <UUID>
+    dirvcs tree --remove <UUID>
 ```
-
-Manage and view persisted directory trees.
-
 ---
 
-### `changes`
+### changes
 
+Compare differences between two snapshots, or between a snapshot and the current state.
 ```bash
-dirvcs changes
-dirvcs changes --old <UUID>
-dirvcs changes --old <UUID> --new <UUID>
+    dirvcs changes
+    dirvcs changes --old -o <UUID>
+    dirvcs changes --old -o <UUID> --new -n <UUID>
+    dirvcs changes --old-path <file1.gz> --new-path <file2.gz>
+    dirvcs changes --export-simple <changelog.txt>
+    dirvcs changes --export-verbose <changelog.json>
+    dirvcs changes --print -p
+    dirvcs changes --export -e
+    dirvcs changes --verbose -v
 ```
-
-Compare directory changes between snapshots or vs current state.
+Notes:
+- At least one snapshot must exist before running `changes`.
+- If both export and print are disabled, output defaults to terminal.
 
 ---
 
-### `ignore`
+### ignore
 
+Manage ignored files and directories.
 ```bash
-dirvcs ignore node_modules dist
-dirvcs ignore --list
-dirvcs ignore --remove node_modules
+    dirvcs ignore node_modules dist
+    dirvcs ignore --list
+    dirvcs ignore --remove node_modules
 ```
-
-Add, list, or remove ignored paths from the \`.ignore\` file.
-
 ---
 
-### `logs`
+### logs
 
+Display internal DirVCS operation logs.
 ```bash
-dirvcs logs
+    dirvcs logs
 ```
+---
 
-View internal operation logs (persist, delete, compare, etc).
+### export
+
+Export a snapshot or current directory tree as JSON.
+
+    dirvcs export --path -p ./tree.json
+    dirvcs export --uuid -u <UUID> --path -p ./snapshot.json
 
 ---
 
-### `export`
+### config
 
+View or modify configuration settings.
 ```bash
-dirvcs export --path ./tree.json
-dirvcs export --uuid <UUID> --path ./snapshot.json
+    dirvcs config
+    dirvcs config --set-key treelimit --set-value 50
 ```
-
-Export a directory tree snapshot to JSON.
-
 ---
 
-### `config`
+## Configuration
 
+Configuration is stored in a YAML file at:
 ```bash
-dirvcs config
-dirvcs config --set-key treelimit --set-value 50
+    .dirvcs/config.yaml
 ```
-
-View or update config settings like \`treelimit\`.
-
----
-
-## ⚙️ Configuration
-
-DirVCS uses a YAML config file located at:
-
-```
-$HOME/.dirvcs/config.yaml
-```
-
 Example:
-
-```yaml
-treelimit: 20
-autoCompress: true
-```
-
-You can override values using:
-
 ```bash
-dirvcs config --set-key treelimit --set-value 50
+    changes:
+      export: false
+      print: true
+    indent: "├──"
+    treelimit: 20
+    verbose: false
 ```
+---
+
+## File Structure
+```bash
+    .dirvcs/
+    ├── trees/
+    │   ├── <uuid>.gz
+    │   └── treelogs.json
+    ├── logs.json
+    ├── config.yaml
+    └── .ignore
+```
+---
+
+## License
+
+MIT License © 2025 Soham Joshi
 
 ---
 
-## 📁 File Structure
-
-```
-.dirvcs/
-├── snapshots/
-├── logs/
-├── config.yaml
-└── .ignore
-```
-
----
-
-## 📄 License
-
-MIT License © 2025 [Soham Joshi]
-
----
-
-Built as a side project for backup managment in Go using [Cobra](https://github.com/spf13/cobra) and [Viper](https://github.com/spf13/viper).
+Built using Cobra (github.com/spf13/cobra) and Viper (github.com/spf13/viper).
 `

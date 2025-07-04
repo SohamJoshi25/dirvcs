@@ -27,7 +27,7 @@ You can provide a commit message using the -m flag.`,
 }
 
 func init() {
-	persistCmd.Flags().StringVarP(&message, "message", "m", "", "Commit message for the snapshot")
+	persistCmd.Flags().StringVarP(&message, "message", "m", "<no-message>", "Commit message for the snapshot")
 	persistCmd.MarkFlagRequired("message")
 
 	rootCmd.AddCommand(persistCmd)

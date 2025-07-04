@@ -1,0 +1,383 @@
+{
+  "name": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs",
+  "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs",
+  "depth": 0,
+  "isDir": true,
+  "modificationTime": "2025-07-04T08:05:05+05:30",
+  "size": 11378439,
+  "hash": "6c72f7089dfa34782ffb347b00a46dcfb629753f72dc02a99c088698b2bf8c4d",
+  "children": [
+    {
+      "name": "Readme.md",
+      "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\Readme.md",
+      "depth": 1,
+      "isDir": false,
+      "modificationTime": "2025-07-04T08:02:09+05:30",
+      "size": 3894,
+      "hash": "5056682422325695691003aa674825e1a433c09fdd593e2bf7014d23ac90cf8b",
+      "children": null
+    },
+    {
+      "name": "cmd",
+      "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\cmd",
+      "depth": 1,
+      "isDir": true,
+      "modificationTime": "2025-07-03T09:22:47+05:30",
+      "size": 14523,
+      "hash": "431e31b37b3659e8b71228cabe52e48f16793b306e8193ba93b0846cf8afd929",
+      "children": [
+        {
+          "name": "changes.go",
+          "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\cmd\\changes.go",
+          "depth": 2,
+          "isDir": false,
+          "modificationTime": "2025-07-04T03:15:02+05:30",
+          "size": 4597,
+          "hash": "07040ce569e5a01c6c341a55b52d62bc1985bd6a118abe967d0e54d2881c2f9b",
+          "children": null
+        },
+        {
+          "name": "config.go",
+          "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\cmd\\config.go",
+          "depth": 2,
+          "isDir": false,
+          "modificationTime": "2025-07-04T02:48:09+05:30",
+          "size": 2034,
+          "hash": "12d9c35af7f59e467912d0282d5be80a4cb72910d7109acd8cd09abc950da0c9",
+          "children": null
+        },
+        {
+          "name": "export.go",
+          "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\cmd\\export.go",
+          "depth": 2,
+          "isDir": false,
+          "modificationTime": "2025-07-03T10:31:36+05:30",
+          "size": 972,
+          "hash": "0bc9911e45c582b04b7b2c71419cc5900b512142487df80406134014f9ad10c7",
+          "children": null
+        },
+        {
+          "name": "ignore.go",
+          "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\cmd\\ignore.go",
+          "depth": 2,
+          "isDir": false,
+          "modificationTime": "2025-07-03T10:31:08+05:30",
+          "size": 1314,
+          "hash": "77c6d3271f9d4f2aecfb968f9073126d8333f234ecc2113b793b080586f844d4",
+          "children": null
+        },
+        {
+          "name": "init.go",
+          "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\cmd\\init.go",
+          "depth": 2,
+          "isDir": false,
+          "modificationTime": "2025-07-04T07:46:08+05:30",
+          "size": 803,
+          "hash": "aa71238b4a5ad400b26b36433faddbc3886a3f83a600aefac4595ddd3a853614",
+          "children": null
+        },
+        {
+          "name": "logs.go",
+          "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\cmd\\logs.go",
+          "depth": 2,
+          "isDir": false,
+          "modificationTime": "2025-07-03T10:30:47+05:30",
+          "size": 596,
+          "hash": "5c2fb8ea0f7cfec4026ae41d73e1c7d204ef2ec898710634f6d573cfff3bdf55",
+          "children": null
+        },
+        {
+          "name": "persist.go",
+          "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\cmd\\persist.go",
+          "depth": 2,
+          "isDir": false,
+          "modificationTime": "2025-07-04T07:46:56+05:30",
+          "size": 838,
+          "hash": "f66f443a52ae1fd4ffce98f08d86c5db8c18cac4fd07305bfa2184bfe078a375",
+          "children": null
+        },
+        {
+          "name": "root.go",
+          "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\cmd\\root.go",
+          "depth": 2,
+          "isDir": false,
+          "modificationTime": "2025-07-04T07:45:11+05:30",
+          "size": 1650,
+          "hash": "e49e68cc96e7763dab27f59e3a760db68a15fbb295ab21db48502dad37d1477d",
+          "children": null
+        },
+        {
+          "name": "tree.go",
+          "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\cmd\\tree.go",
+          "depth": 2,
+          "isDir": false,
+          "modificationTime": "2025-07-03T11:38:43+05:30",
+          "size": 1719,
+          "hash": "e7c4973b1b6ef938ce62144163c2bd3f89f64c88a4a43c8d644dede4cc1b36dd",
+          "children": null
+        }
+      ]
+    },
+    {
+      "name": "dirvcs.exe",
+      "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\dirvcs.exe",
+      "depth": 1,
+      "isDir": false,
+      "modificationTime": "2025-07-04T08:05:05+05:30",
+      "size": 11322368,
+      "hash": "4c94949b40e1c78147b0f622122b35f5d27676a78caedeb216a6f7118338a521",
+      "children": null
+    },
+    {
+      "name": "go.mod",
+      "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\go.mod",
+      "depth": 1,
+      "isDir": false,
+      "modificationTime": "2025-07-02T19:23:06+05:30",
+      "size": 935,
+      "hash": "a9b1d48f5849c70f1ff68feb21869fd5827d3531d75e537cdfdacb86e5269dfb",
+      "children": null
+    },
+    {
+      "name": "go.sum",
+      "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\go.sum",
+      "depth": 1,
+      "isDir": false,
+      "modificationTime": "2025-07-02T19:23:06+05:30",
+      "size": 4201,
+      "hash": "bebcf0a2c9d96908c341ea80f74184f47830c68ea931851b87ca4639c1cce0b5",
+      "children": null
+    },
+    {
+      "name": "internal",
+      "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal",
+      "depth": 1,
+      "isDir": true,
+      "modificationTime": "2025-07-02T22:35:56+05:30",
+      "size": 28349,
+      "hash": "dba8047a744357a61daed22a5e1425ce8cf48ec616b02de21c743e51b9f26a03",
+      "children": [
+        {
+          "name": "data",
+          "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal\\data",
+          "depth": 2,
+          "isDir": true,
+          "modificationTime": "2025-07-02T19:41:34+05:30",
+          "size": 369,
+          "hash": "3772ff39ec0021e3e035931cdeb54c341914081407167134c71aa1bdc65e3496",
+          "children": [
+            {
+              "name": "path",
+              "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal\\data\\path",
+              "depth": 3,
+              "isDir": true,
+              "modificationTime": "2025-07-02T19:41:34+05:30",
+              "size": 369,
+              "hash": "2ffbe6e5fed85df3727823ae190ef72c91135ea150b70380ccc91479e2c8445c",
+              "children": [
+                {
+                  "name": "path.go",
+                  "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal\\data\\path\\path.go",
+                  "depth": 4,
+                  "isDir": false,
+                  "modificationTime": "2025-07-02T14:04:52+05:30",
+                  "size": 369,
+                  "hash": "b65ff3b302db7fe09c6a0cf785645791965a09f7427e594b48b483ffebe53725",
+                  "children": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "dirvcs",
+          "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal\\dirvcs",
+          "depth": 2,
+          "isDir": true,
+          "modificationTime": "2025-07-01T18:11:04+05:30",
+          "size": 17932,
+          "hash": "757119fb706eeaffad3cd2ebe706a74b2362b8252dfe6672ede2fef011216e85",
+          "children": [
+            {
+              "name": "dirvcs.go",
+              "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal\\dirvcs\\dirvcs.go",
+              "depth": 3,
+              "isDir": false,
+              "modificationTime": "2025-07-04T08:05:00+05:30",
+              "size": 17932,
+              "hash": "9472153b97bde8e172a4b9f0fbf371782c2601c9defae084882ba9ee5f5a26d5",
+              "children": null
+            }
+          ]
+        },
+        {
+          "name": "services",
+          "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal\\services",
+          "depth": 2,
+          "isDir": true,
+          "modificationTime": "2025-07-02T19:41:11+05:30",
+          "size": 8294,
+          "hash": "27cc381fad0ee6c8b5ebab9818772a74ea667fca78d790b2dca7c12c3edceb27",
+          "children": [
+            {
+              "name": "color",
+              "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal\\services\\color",
+              "depth": 3,
+              "isDir": true,
+              "modificationTime": "2025-07-02T19:40:17+05:30",
+              "size": 353,
+              "hash": "8d3a0ba91cf910c229cdf21fe7f3d2cfadf06ac0e4eaa17f0545339afe69d173",
+              "children": [
+                {
+                  "name": "color.go",
+                  "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal\\services\\color\\color.go",
+                  "depth": 4,
+                  "isDir": false,
+                  "modificationTime": "2025-07-02T14:35:01+05:30",
+                  "size": 353,
+                  "hash": "05ca8924c19fee7a42babeda0c13962ccad9f9b51b6238e307c79a4ed220db9c",
+                  "children": null
+                }
+              ]
+            },
+            {
+              "name": "ignore",
+              "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal\\services\\ignore",
+              "depth": 3,
+              "isDir": true,
+              "modificationTime": "2025-07-02T19:40:51+05:30",
+              "size": 1596,
+              "hash": "9427827dba09d10086d08a9ac19db52ca61c593218a8e580d59fb4130d896ecd",
+              "children": [
+                {
+                  "name": "ignore.go",
+                  "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal\\services\\ignore\\ignore.go",
+                  "depth": 4,
+                  "isDir": false,
+                  "modificationTime": "2025-07-03T09:20:19+05:30",
+                  "size": 1596,
+                  "hash": "ac3c977210e4fec53340aee80592ebaba0a5c3152c65290d7173a6f7602bded0",
+                  "children": null
+                }
+              ]
+            },
+            {
+              "name": "init",
+              "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal\\services\\init",
+              "depth": 3,
+              "isDir": true,
+              "modificationTime": "2025-07-02T19:40:37+05:30",
+              "size": 1277,
+              "hash": "8f76eafe9bf9e847b14a6101b4ca1a88fd4e9a5e261ceb4f0c4f15ba520c2268",
+              "children": [
+                {
+                  "name": "createInit.go",
+                  "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal\\services\\init\\createInit.go",
+                  "depth": 4,
+                  "isDir": false,
+                  "modificationTime": "2025-07-03T10:18:32+05:30",
+                  "size": 1277,
+                  "hash": "9503a20f3408835e2d27ebe3b9a54167698aad95db527af7fff73af5881ba40e",
+                  "children": null
+                }
+              ]
+            },
+            {
+              "name": "logging",
+              "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal\\services\\logging",
+              "depth": 3,
+              "isDir": true,
+              "modificationTime": "2025-07-02T19:41:11+05:30",
+              "size": 750,
+              "hash": "c2ccc1248e75fd95af80b601f60aee23a1b24c4719ab56a1671bf6369d516307",
+              "children": [
+                {
+                  "name": "logging.go",
+                  "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal\\services\\logging\\logging.go",
+                  "depth": 4,
+                  "isDir": false,
+                  "modificationTime": "2025-07-03T08:12:09+05:30",
+                  "size": 750,
+                  "hash": "a15eb4b5d82a79f77be7c61a6c59e54a71e1d7f1f0f9dcaff47772f5bf60310f",
+                  "children": null
+                }
+              ]
+            },
+            {
+              "name": "treelogs",
+              "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal\\services\\treelogs",
+              "depth": 3,
+              "isDir": true,
+              "modificationTime": "2025-07-02T19:40:12+05:30",
+              "size": 4318,
+              "hash": "51841f45e2a6cbbed8825661f845d363810ef24814582ab550bdc38c320f5a15",
+              "children": [
+                {
+                  "name": "treelogs.go",
+                  "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal\\services\\treelogs\\treelogs.go",
+                  "depth": 4,
+                  "isDir": false,
+                  "modificationTime": "2025-07-04T08:04:46+05:30",
+                  "size": 4318,
+                  "hash": "b75aa2f7e47855457450c252a4fcab7535ee8f9d1e7024ff2e79f0dbd4b868a0",
+                  "children": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "structs",
+          "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal\\structs",
+          "depth": 2,
+          "isDir": true,
+          "modificationTime": "2025-07-02T15:00:19+05:30",
+          "size": 1754,
+          "hash": "27c990f6848b9b863ee18e1912c3f2d40ae4d1d60741cb3a8eedf8491e6ba560",
+          "children": [
+            {
+              "name": "config.go",
+              "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal\\structs\\config.go",
+              "depth": 3,
+              "isDir": false,
+              "modificationTime": "2025-07-03T09:46:13+05:30",
+              "size": 80,
+              "hash": "6816daa201a6009597b8a3e9ca3eb893ca22bff08f47494be2af3a9003d9a278",
+              "children": null
+            },
+            {
+              "name": "filenode.go",
+              "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal\\structs\\filenode.go",
+              "depth": 3,
+              "isDir": false,
+              "modificationTime": "2025-07-03T21:01:21+05:30",
+              "size": 1446,
+              "hash": "94330ac4bb6a867b00bb95b3ee21608dcfdba0e1765fddf3938b85e513da4f49",
+              "children": null
+            },
+            {
+              "name": "treelog.go",
+              "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\internal\\structs\\treelog.go",
+              "depth": 3,
+              "isDir": false,
+              "modificationTime": "2025-07-02T22:00:05+05:30",
+              "size": 228,
+              "hash": "15b902121c0ecc769f69e399291d85686248291e863d55d873c388faf01cdcac",
+              "children": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "main.go",
+      "path": "E:\\Soham\\Coding Files\\Go\\projects\\dirvcs\\main.go",
+      "depth": 1,
+      "isDir": false,
+      "modificationTime": "2025-07-02T21:59:30+05:30",
+      "size": 73,
+      "hash": "695faff2ee2d32061457de57bf46bf8b0c1febc477610cec8af938d3d83ce3e8",
+      "children": null
+    }
+  ]
+}

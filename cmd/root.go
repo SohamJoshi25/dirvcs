@@ -13,8 +13,8 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:   "dirvcs",
-	Short: "DirVCS is a lightweight directory version control system",
-	Long: `DirVCS is a CLI tool that allows you to snapshot, compare, and manage versions of directory structures.
+	Short: "DIRVCS is a lightweight directory version control system",
+	Long: `DIRVCS is a CLI tool that allows you to snapshot, compare, and manage versions of directory structures.
 
 It supports persisting directory states, comparing changes, pruning old versions, and more.
 `,
@@ -25,7 +25,7 @@ It supports persisting directory states, comparing changes, pruning old versions
   dirvcs changes               # Compare tree with previous snapshot
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(Color.Color("Welcome to DIR VCS\n", Color.Blue))
+		fmt.Println(Color.Color("\nWelcome to DIR VCS\n", Color.Blue))
 		_ = cmd.Help() // show help by default
 	},
 }
@@ -42,7 +42,7 @@ func init() {
 	viper.SetDefault("verbose", false)
 	viper.SetDefault("changes.export", false)
 	viper.SetDefault("changes.print", true)
-	viper.SetDefault("indent", "|---")
+	viper.SetDefault("indent", "├──")
 
 	// Read config
 	if err := viper.ReadInConfig(); err != nil {

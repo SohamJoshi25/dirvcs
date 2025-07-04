@@ -19,7 +19,7 @@ var initCmd = &cobra.Command{
 	Long: `Initialisess dirvcs in the current working directory. 
 		Creates .dirvcs directory to store metadata. 
 		Creates .ignore, config.yaml, logs.json, trees/treelogs.json to store metadata about directory.
-		Without a .dirvcs folder, dirvcs cannot work.`,
+		Without a .dirvcs folder, dirvcs cannot work except when comparing trees with specified .gz path.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println(Color.Color("Welcome to DIR VCS\n", Color.Cyan))
 		Init.CreateInit()

@@ -61,6 +61,10 @@ func GetByUuid(uuid string) (*Struct.TreeLog, error) {
 		_ = json.Unmarshal(data, &logs)
 	}
 
+	if len(logs) == 0 {
+		return nil, fmt.Errorf("please persist atleast once to export version")
+	}
+
 	if uuid == "" {
 		return logs[len(logs)-1], nil
 	}

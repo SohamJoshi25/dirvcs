@@ -511,6 +511,11 @@ func PrintTreeUUID(uuid string) {
 func ExportTree(uuid string, filepath string) {
 	treelog, err := TLog.GetByUuid(uuid)
 
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
+
 	TLog.PrintTreeLog(treelog)
 
 	if err != nil {
@@ -714,7 +719,7 @@ func CompareTreePath(oldPath, newPath, exportpath string, exporttype int, printT
 func initConfig() {
 	GINDENT = viper.GetString("indent")
 	if GINDENT == "" {
-		GINDENT = "|--"
+		GINDENT = "├──"
 	}
 	VERBOSE = viper.GetBool("verbose")
 }
