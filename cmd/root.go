@@ -29,7 +29,13 @@ It supports persisting directory states, comparing changes, pruning old versions
   dirvcs changes               # Compare tree with previous snapshot
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(Color.Color("\nWelcome to DIR VCS\n", Color.Blue))
+		fmt.Println(Color.Color(`
+____ ___ ______     ______ ____  
+|  _ \_ _|  _ \ \   / / ___/ ___| 
+| | | | || |_) \ \ / / |   \___ \ 
+| |_| | ||  _ < \ V /| |___ ___) |
+|____/___|_| \_\ \_/  \____|____/ 
+		`, Color.Blue))
 		_ = cmd.Help() // show help by default
 	},
 }
