@@ -132,6 +132,13 @@ Notes:
 
 Outputs:
 
+- Start
+```dirvcs```
+
+![DirVCS Banner](assets/rootImage.png "DirVCS")
+
+<br>
+
 - printing to terminal
 ```dirvcs changes```
 
